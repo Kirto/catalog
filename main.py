@@ -3,7 +3,7 @@ import psycopg2
 import pandas as pd
 import variables as creds
 import time
-import tkinter
+import tkinter as tk
 from tkinter.messagebox import showinfo, showwarning
 
 # Time for watchdog how long time working program
@@ -75,7 +75,13 @@ class WorkWithDatabase:
 
 class GUIForDatabase:
     def __int__(self):
+        self.gui = tk.Tk()
+
+    def open_gui(self):
         pass
+
+    def gui_mainloop(self):
+        self.gui.mainloop()
 
 
 if __name__ == '__main__':
@@ -86,6 +92,9 @@ if __name__ == '__main__':
 
     data = WorkWithDatabase()
     data.update_data_in_db(table, new_value=new_val, field='')
+
+    app = GUIForDatabase()
+    app.open_gui()
 
     # print(load_one_item_by_name_from_db(table, name))
 
