@@ -1,7 +1,7 @@
 import psycopg2
 # import sqlalchemy
 import pandas as pd
-import variables as creds
+import variables as config
 import time
 import tkinter as tk
 from tkinter.messagebox import showinfo, showwarning
@@ -12,8 +12,8 @@ start = time.time()
 
 class WorkWithDatabase:
     def __int__(self):
-        self.conn_string = "host=" + creds.PGHOST + " port=" + creds.GPPORT + " dbname=" + \
-                           creds.PGDATABASE + " user=" + creds.PGUSER + " password=" + creds.PGPASSWORD
+        self.conn_string = "host=" + config.PGHOST + " port=" + config.GPPORT + " dbname=" + \
+                           config.PGDATABASE + " user=" + config.PGUSER + " password=" + config.PGPASSWORD
         self.conn = psycopg2.connect(self.conn_string)
         self.cursor = self.conn.cursor()
 
@@ -117,6 +117,13 @@ class GUIForDatabase(tk.Tk):
         if self.ico_filepath:
             self.iconphoto(False, tk.PhotoImage(file=self.ico_filepath))
         self.config(bg=self.bg)
+
+    def create_menu(self):
+        """
+
+        :return: None
+        """
+        pass
 
     def app_create_widgets(self):
         pass
