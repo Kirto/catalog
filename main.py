@@ -4,6 +4,7 @@ import pandas as pd
 import variables as config
 import time
 import tkinter as tk
+from tkinter import ttk
 from tkinter.messagebox import showinfo, showwarning
 
 # Time for watchdog how long time working program
@@ -92,7 +93,6 @@ class GUIForDatabase(tk.Tk):
         :param10 minsizey: minimum size of application for 'x'
         :param11 resizablexy: resizable for horizontal and vertical of application
         :param12 bg_gui: background of application
-        :return: None
         """
         super()
         self.title(title_gui)
@@ -110,6 +110,16 @@ class GUIForDatabase(tk.Tk):
         self.bg = bg_gui
 
     def config_gui(self):
+        """
+
+        Configurate your application:
+            - size
+            - maxsize
+            - minsize
+            - position on screen
+            - resizable application
+            - ico in title string
+        """
         self.geometry(f"{self.width}x{self.height}+{self.offsetx}+{self.offsety}")
         self.maxsize(self.maxsizex, self.maxsizey)
         self.minsize(self.minsizex, self.minsizey)
@@ -121,12 +131,31 @@ class GUIForDatabase(tk.Tk):
     def create_menu(self):
         """
 
-        :return: None
         """
         pass
 
+    @staticmethod
     def app_create_widgets(self):
-        pass
+        """
+
+        Create a widgets on application
+        """
+        def grid_items():
+        #     count = 0
+        #     for _ in buttons:
+        #         _.grid(row=0, column=count + 1, padx=5, pady=10)
+        #         count += 1
+        #     count = 0
+        #     for _ in buttons1:
+        #         _.grid(row=1, column=count + 1, padx=5, pady=10)
+        #         count += 1
+        #     full.grid(row=0, column=0, padx=2, pady=2)
+        #
+        # full = ttk.Combobox(self, background='blue', foreground='dark green')
+        # buttons = [tk.Button(full, text=f'Button {_ + 1}') for _ in range(5)]
+        # buttons1 = [tk.Button(full, text=f'Button {_ + 1}') for _ in range(5)]
+            pass
+        grid_items()
 
     def start_app(self):
         """
@@ -135,11 +164,11 @@ class GUIForDatabase(tk.Tk):
             - init
             - configure
             - create widgets
-        :return: None
         """
         self.__int__()
         self.config_gui()
         self.app_create_widgets()
+
         self.mainloop()
 
 
