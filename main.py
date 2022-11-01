@@ -75,10 +75,13 @@ class WorkWithDatabase:
 
 
 class GUIForDatabase(tk.Tk):
-    def __int__(self, title_gui: str = 'Tk', width: int = 400, height: int = 400,
-                offsetx: int = 100, offsety: int = 100, png_ico_filepath: str = '',
-                maxsizex: int = 500, maxsizey: int = 500, minsizex: int = 100, minsizey: int = 100,
-                resizablexy: bool = True, bg_gui: str = 'gray'):
+    def __int__(self, title_gui: str = config.NAME_GUI, width: int = config.WIDTH,
+                height: int = config.HEIGHT,
+                offsetx: int = config.OFFSETX, offsety: int = config.OFFSETY,
+                png_ico_filepath: str = config.PNG_ICO_PATH, maxsizex: int = config.MAXSIZEX,
+                maxsizey: int = config.MAXSIZEY, minsizex: int = config.MINSIZEX,
+                minsizey: int = config.MINSIZEY,
+                resizablexy: bool = config.RESIZE, bg_gui: str = config.BGCOLOR):
         """
 
         :param1 title_gui: name of application
@@ -134,28 +137,12 @@ class GUIForDatabase(tk.Tk):
         """
         pass
 
-    @staticmethod
     def app_create_widgets(self):
         """
 
         Create a widgets on application
         """
-        def grid_items():
-        #     count = 0
-        #     for _ in buttons:
-        #         _.grid(row=0, column=count + 1, padx=5, pady=10)
-        #         count += 1
-        #     count = 0
-        #     for _ in buttons1:
-        #         _.grid(row=1, column=count + 1, padx=5, pady=10)
-        #         count += 1
-        #     full.grid(row=0, column=0, padx=2, pady=2)
-        #
-        # full = ttk.Combobox(self, background='blue', foreground='dark green')
-        # buttons = [tk.Button(full, text=f'Button {_ + 1}') for _ in range(5)]
-        # buttons1 = [tk.Button(full, text=f'Button {_ + 1}') for _ in range(5)]
-            pass
-        grid_items()
+        pass
 
     def start_app(self):
         """
