@@ -134,28 +134,12 @@ class GUIForDatabase(tk.Tk):
         """
         pass
 
-    @staticmethod
     def app_create_widgets(self):
         """
 
         Create a widgets on application
         """
-        def grid_items():
-        #     count = 0
-        #     for _ in buttons:
-        #         _.grid(row=0, column=count + 1, padx=5, pady=10)
-        #         count += 1
-        #     count = 0
-        #     for _ in buttons1:
-        #         _.grid(row=1, column=count + 1, padx=5, pady=10)
-        #         count += 1
-        #     full.grid(row=0, column=0, padx=2, pady=2)
-        #
-        # full = ttk.Combobox(self, background='blue', foreground='dark green')
-        # buttons = [tk.Button(full, text=f'Button {_ + 1}') for _ in range(5)]
-        # buttons1 = [tk.Button(full, text=f'Button {_ + 1}') for _ in range(5)]
-            pass
-        grid_items()
+        pass
 
     def start_app(self):
         """
