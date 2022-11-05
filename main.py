@@ -24,7 +24,7 @@ def load_all_data(table_name: str) -> ():
     :param1 table_name: name of table in your database
     :return: SELECT * FROM table;
     """
-    sql_command = f"SELECT * FROM {table_name};"
+    sql_command = f"SELECT * FROM {table_name} ORDER BY quantity ASC LIMIT 10;"
     data = pd.read_sql(sql=sql_command, con=conn)
     return data
 
@@ -142,9 +142,13 @@ class GUIForDatabase(tk.Tk):
 
     def search(self):
         if self.ozm_search.get():
-            self.label1.config(text=load_one_item_by_ozm_from_db(table_name=config.PGTABLE, ozm_number=self.search_entry.get()))
+            self.label1.config(text=load_one_item_by_ozm_from_db(table_name=config.PGTABLE,
+                                                                 ozm_number=self.search_entry.get()))
         elif not self.ozm_search.get():
-            self.label1.config(text=load_one_item_by_name_from_db(table_name=config.PGTABLE, selected_name=self.search_entry.get()))
+            text = str(load_one_item_by_name_from_db(table_name=config.PGTABLE,
+                                                     selected_name=self.search_entry.get()))
+            self.label1.config(text=text)
+            print(text)
 
     def package_widgets_on_screen_application(self):
         self.wrapper.grid(row=0, column=0)
@@ -197,6 +201,7 @@ if __name__ == '__main__':
     # data = WorkWithDatabase()
     # data.update_data_in_db(table, new_value=new_val, field='')
 
+    print(load_all_data('Items'))
     app = GUIForDatabase()
     app.start_app()
 
