@@ -60,7 +60,7 @@ def load_one_item_by_name_from_db(table_name: str, selected_name: str) -> ():
     for _ in range(len(data['name']) - 1):
         sql_command += f"(name = '{data['name'][_]}') OR "
     sql_command += f"(name = '{data['name'][len(data['name']) - 1]}');"
-    data = pd.read_sql(sql_command, conn)
+    data = pd.read_sql_query(sql_command, conn)
     return data
 
 
@@ -141,10 +141,16 @@ class GUIForDatabase(tk.Tk):
         pass
 
     def search(self):
-        if self.ozm_search.get():
-            self.label1.config(text=load_one_item_by_ozm_from_db(table_name=config.PGTABLE,
-                                                                 ozm_number=self.search_entry.get()))
-        elif not self.ozm_search.get():
+        if self.search_entry.get() == '':
+            text = 'Вы не ввели данные! Попробуйте снова :)'
+            self.label1.config(text=text)
+            return
+        if self.ozm_search.get() and self.search_entry.get() != '':
+            text = str(load_one_item_by_ozm_from_db(table_name=config.PGTABLE,
+                                                    ozm_number=int(self.search_entry.get())))
+            self.label1.config(text=text)
+            print(text)
+        elif not self.ozm_search.get() and self.search_entry.get() != '':
             text = str(load_one_item_by_name_from_db(table_name=config.PGTABLE,
                                                      selected_name=self.search_entry.get()))
             self.label1.config(text=text)
