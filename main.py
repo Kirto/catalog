@@ -18,13 +18,13 @@ conn = psycopg2.connect(conn_string)
 cursor = conn.cursor()
 
 
-def load_all_data(table_name: str) -> ():
+def load_limit_data(table_name: str, limit: int = 10) -> ():
     """
 
     :param1 table_name: name of table in your database
     :return: SELECT * FROM table;
     """
-    sql_command = f"SELECT * FROM {table_name} ORDER BY quantity ASC LIMIT 10;"
+    sql_command = f"SELECT * FROM {table_name} ORDER BY quantity ASC LIMIT {limit};"
     data = pd.read_sql(sql=sql_command, con=conn)
     return data
 
@@ -162,10 +162,17 @@ class GUIForDatabase(tk.Tk):
         self.search_ozm.grid(row=1, column=0)
         self.search_name.grid(row=1, column=1)
         self.search_button.grid(row=0, column=1)
-        self.label1.grid(row=1, column=0)
+        # self.label1.grid(row=1, column=0)
+        self.list_of_items.grid(row=2, column=0, padx=2, pady=2)
 
     def enter_parametrs(self):
         self.ozm_search = tk.BooleanVar()
+
+    def get_combobox_items(self):
+        s = load_limit_data(config.PGTABLE, config.LIMIT_IN_LIST_HOME_PAGE)\
+            .get(['name', 'ozm', 'quantity'])
+        print(s)
+        print(type(s))
 
     def app_create_widgets(self):
         """
@@ -179,6 +186,7 @@ class GUIForDatabase(tk.Tk):
         self.search_button = tk.Button(self.wrapper, text='Поиск', background='blue', foreground='white',
                                        command=self.search)
         self.label1 = tk.Label(self, width=50, height=10)
+        self.list_of_items = ttk.Combobox(self.wrapper, values=self.get_combobox_items(), height=20, width=50)
 
         self.package_widgets_on_screen_application()
 
@@ -207,7 +215,7 @@ if __name__ == '__main__':
     # data = WorkWithDatabase()
     # data.update_data_in_db(table, new_value=new_val, field='')
 
-    print(load_all_data('Items'))
+    # print(load_all_data('Items'))
     app = GUIForDatabase()
     app.start_app()
 

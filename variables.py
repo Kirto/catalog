@@ -24,4 +24,5 @@ BTNBGCOLOR = 'black'
 BTNFGCOLOR = 'white'
 RESIZE = True
 PNG_ICO_PATH = ''  # path to file *.png for creating ico application
+LIMIT_IN_LIST_HOME_PAGE = 10 # limit in sql query in listbox or labels or combobox on home page
 
