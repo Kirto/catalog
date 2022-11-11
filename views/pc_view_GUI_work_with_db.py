@@ -1,80 +1,13 @@
-import psycopg2
-# import sqlalchemy
-import pandas as pd
-import variables as config
-import time
+"""
+
+This block created GUI for view information from postgres database.
+
+Author: Kirto
+version: zero
+"""
+
 import tkinter as tk
-from tkinter import ttk
-from tkinter.messagebox import showinfo, showwarning
-
-# Time for watchdog how long time working program
-start = time.time()
-
-
-# def connect_to_db():
-conn_string = "host=" + config.PGHOST + " port=" + config.GPPORT + " dbname=" + \
-                   config.PGDATABASE + " user=" + config.PGUSER + " password=" + config.PGPASSWORD
-conn = psycopg2.connect(conn_string)
-cursor = conn.cursor()
-
-
-def load_limit_data(table_name: str, limit: int = 10) -> ():
-    """
-
-    :param1 table_name: name of table in your database
-    :return: SELECT * FROM table;
-    """
-    sql_command = f"SELECT * FROM {table_name} ORDER BY quantity ASC LIMIT {limit};"
-    data = pd.read_sql(sql=sql_command, con=conn)
-    return data
-
-
-def update_data_in_db(table_name: str, new_value: list, field: str) -> ():
-    """
-
-    :param1 table_name: name table in database
-    :param2 new_value: new values which need insert into table
-    :param3 field: old values
-    :return: None
-    """
-    pass
-
-
-def load_one_item_by_name_from_db(table_name: str, selected_name: str) -> ():
-    """
-
-    :param1 table_name:  name table of database
-    :param2 selected_name: piece of name in database
-    :return: table of select with piece search phrase by name device
-    """
-
-    sql_command = f"SELECT name FROM {table_name};"
-    colum_name = pd.read_sql(sql_command, conn)
-    ar = []
-    for _ in colum_name.values:
-        if f'{selected_name}'.lower() in _[0].lower():
-            ar.append([_[0]])
-    data = pd.DataFrame(ar, columns=['name'])
-
-    sql_command = f"SELECT * FROM {table_name} WHERE "
-    for _ in range(len(data['name']) - 1):
-        sql_command += f"(name = '{data['name'][_]}') OR "
-    sql_command += f"(name = '{data['name'][len(data['name']) - 1]}');"
-    data = pd.read_sql_query(sql_command, conn)
-    return data
-
-
-def load_one_item_by_ozm_from_db(table_name: str, ozm_number: int) -> ():
-    """
-
-    :param1 table_name:  name table of database
-    :param2 ozm_number:  search by ozm
-    :return:  table of search by ozm device
-    """
-
-    sql_command = f"SELECT * FROM {table_name} WHERE ozm = {ozm_number}"
-    data = pd.read_sql(sql_command, conn)
-    return data
+import variables as config
 
 
 class GUIForDatabase(tk.Tk):
@@ -141,20 +74,7 @@ class GUIForDatabase(tk.Tk):
         pass
 
     def search(self):
-        if self.search_entry.get() == '':
-            text = 'Вы не ввели данные! Попробуйте снова :)'
-            self.label1.config(text=text)
-            return
-        if self.ozm_search.get() and self.search_entry.get() != '':
-            text = str(load_one_item_by_ozm_from_db(table_name=config.PGTABLE,
-                                                    ozm_number=int(self.search_entry.get())))
-            self.label1.config(text=text)
-            print(text)
-        elif not self.ozm_search.get() and self.search_entry.get() != '':
-            text = str(load_one_item_by_name_from_db(table_name=config.PGTABLE,
-                                                     selected_name=self.search_entry.get()))
-            self.label1.config(text=text)
-            print(text)
+        pass
 
     def package_widgets_on_screen_application(self):
         self.wrapper.grid(row=0, column=0)
@@ -188,6 +108,7 @@ class GUIForDatabase(tk.Tk):
         self.label1 = tk.Label(self, width=50, height=10)
         self.list_of_items = ttk.Combobox(self.wrapper, values=self.get_combobox_items(), height=20, width=50)
 
+        tk.Listbox(self.wrapper, )
         self.package_widgets_on_screen_application()
 
     def start_app(self):
@@ -206,21 +127,28 @@ class GUIForDatabase(tk.Tk):
         self.mainloop()
 
 
-if __name__ == '__main__':
-    # table = 'items'
-    # name = '6ES'
-    # ozm = 707801
-    # new_val = []
+def configuration_gui():
+    """
+        
+        This function configurate main window 
+    """
+    window.title(config.NAME_GUI)
 
-    # data = WorkWithDatabase()
-    # data.update_data_in_db(table, new_value=new_val, field='')
+    window.geometry(f"{config.WIDTH}x{config.HEIGHT}+"
+                    f"{window.winfo_screenwidth() // 2 - config.WIDTH // 2}+"
+                    f"{window.winfo_screenheight() // 2 - config.HEIGHT // 2}")
+    window.maxsize(config.MAXSIZEX, config.MAXSIZEY)
+    window.minsize(config.MINSIZEX, config.MINSIZEY)
 
-    # print(load_all_data('Items'))
-    app = GUIForDatabase()
-    app.start_app()
+    window.config(background=config.BGCOLOR, width=window.winfo_screenwidth() // 2 - config.WIDTH,
+                  height=window.winfo_screenheight() // 2 - config.HEIGHT)
+    window.resizable(config.RESIZE, config.RESIZE)
+    if config.PNG_ICO_PATH:
+        window.iconphoto(False, tk.PhotoImage(file=config.PNG_ICO_PATH))
 
-    # print(load_one_item_by_name_from_db(table, name))
 
-# Time of watchdog resolve work time
-    work_time = time.time() - start
-    print(f'Work time of program = {work_time}')
+window = tk.Tk()
+configuration_gui()
+
+
+window.mainloop()
