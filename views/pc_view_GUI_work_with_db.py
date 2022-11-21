@@ -127,28 +127,64 @@ class GUIForDatabase(tk.Tk):
         self.mainloop()
 
 
-def configuration_gui():
+def configuration_gui(root):
     """
         
         This function configurate main window 
     """
-    window.title(config.NAME_GUI)
+    root.title(config.NAME_GUI)
 
-    window.geometry(f"{config.WIDTH}x{config.HEIGHT}+"
-                    f"{window.winfo_screenwidth() // 2 - config.WIDTH // 2}+"
-                    f"{window.winfo_screenheight() // 2 - config.HEIGHT // 2}")
-    window.maxsize(config.MAXSIZEX, config.MAXSIZEY)
-    window.minsize(config.MINSIZEX, config.MINSIZEY)
+    root.geometry(f"{config.WIDTH}x{config.HEIGHT}+"
+                  f"{root.winfo_screenwidth() // 2 - config.WIDTH // 2}+"
+                  f"{root.winfo_screenheight() // 2 - config.HEIGHT // 2}")
+    root.maxsize(config.MAXSIZEX, config.MAXSIZEY)
+    root.minsize(config.MINSIZEX, config.MINSIZEY)
 
-    window.config(background=config.BGCOLOR, width=window.winfo_screenwidth() // 2 - config.WIDTH,
-                  height=window.winfo_screenheight() // 2 - config.HEIGHT)
-    window.resizable(config.RESIZE, config.RESIZE)
+    root.config(background=config.BGCOLOR, width=root.winfo_screenwidth() // 2 - config.WIDTH,
+                height=root.winfo_screenheight() // 2 - config.HEIGHT)
+    root.resizable(config.RESIZE, config.RESIZE)
     if config.PNG_ICO_PATH:
-        window.iconphoto(False, tk.PhotoImage(file=config.PNG_ICO_PATH))
+        root.iconphoto(False, tk.PhotoImage(file=config.PNG_ICO_PATH))
 
 
-window = tk.Tk()
-configuration_gui()
+def create_widgets(root):
+    def added_widgets_on_application():
+        wrapper.grid(row=0, column=0)
+        list_items.grid(row=1, column=0)
+        arr = {
+            'id': 'ID',
+            'name': 'Name',
+            'description': 'Description',
+            'quantity': 'Quantity'
+        }
+        text = '|' + f"{arr['id']}".center(20) + '|' + f'{arr["name"]}'.center(30) + '|' + \
+               f'{arr["description"]}'.center(30) + '|' + f'{arr["quantity"]}'.center(30) + '|'
+        tk.Label(wrapper, text=text).grid(row=0, column=0)
+
+    wrapper = tk.Frame(root, borderwidth=2, background='silver', relief='raised')
+    list_items = tk.Listbox(wrapper, bg=config.BGCOLOR, selectforeground=config.LSTFGCOLOR,
+                            selectbackground=config.LSTBGCOLOR, justify='center', width=50)
+
+    # for testing list item
+    a = []
+    for i in range(50):
+        a.append(i // 10)
+        list_items.insert(0, i)
+    list_items.insert(0, a)
+
+    added_widgets_on_application()
 
 
-window.mainloop()
+def main_gui_start():
+    window = tk.Tk()
+    configuration_gui(window)
+    create_widgets(window)
+
+    window.mainloop()
+
+
+
+if __name__ == '__main__':
+    main_gui_start()
+
+
