@@ -130,7 +130,8 @@ class GUIForDatabase(tk.Tk):
 def configuration_gui(root):
     """
         
-        This function configurate main window 
+        This function configurate main window.
+        :param root: Main window.
     """
     root.title(config.NAME_GUI)
 
@@ -147,31 +148,39 @@ def configuration_gui(root):
         root.iconphoto(False, tk.PhotoImage(file=config.PNG_ICO_PATH))
 
 
+def receive_data_from_database(root, name):
+    """
+
+    This function received data from database.
+        :param root: Window where view list in listbox from database
+        :param name: Name of listbox from root
+        :param data: Data from database
+    """
+    # for testing list item
+    a = []
+    for i in range(10):
+        a.append(i)
+        name.insert(i, i)
+    # list_items.insert(0, a)
+
+
 def create_widgets(root):
+    """
+
+    This function for creating all widgets on your application.
+    """
     def added_widgets_on_application():
+        """
+        This function for pack widgets on application.
+        """
         wrapper.grid(row=0, column=0)
         list_items.grid(row=1, column=0)
-        arr = {
-            'id': 'ID',
-            'name': 'Name',
-            'description': 'Description',
-            'quantity': 'Quantity'
-        }
-        text = '|' + f"{arr['id']}".center(20) + '|' + f'{arr["name"]}'.center(30) + '|' + \
-               f'{arr["description"]}'.center(30) + '|' + f'{arr["quantity"]}'.center(30) + '|'
-        tk.Label(wrapper, text=text).grid(row=0, column=0)
 
     wrapper = tk.Frame(root, borderwidth=2, background='silver', relief='raised')
     list_items = tk.Listbox(wrapper, bg=config.BGCOLOR, selectforeground=config.LSTFGCOLOR,
                             selectbackground=config.LSTBGCOLOR, justify='center', width=50)
 
-    # for testing list item
-    a = []
-    for i in range(50):
-        a.append(i // 10)
-        list_items.insert(0, i)
-    list_items.insert(0, a)
-
+    receive_data_from_database(root, list_items)  # FIXME: call receive_data_from_database after connect to database
     added_widgets_on_application()
 
 
