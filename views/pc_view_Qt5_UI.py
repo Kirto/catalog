@@ -7,25 +7,25 @@ version: zero
 """
 
 from PyQt5 import QtWidgets
+import variables as config
 import sys
 
 
-class Window(QtWidgets.QWidget):
+class Window(QtWidgets.QMainWindow):
 
-	def __int__(self):
-		super(Window, self).__init__()
+	def __init__(self):
 
-		dx, dy, w, h, title = 300, 250, 500, 500, 'catalog'
+		super().__init__()
 
-		self.setWindowTitle(title)
-		self.setGeometry(dx, dy, w, h)
+		self.setWindowTitle('Catalog')
+		self.setGeometry(300, 250, 500, 500)
 
 		self.main_text = QtWidgets.QLabel(self)
 		self.main_text.setText('This is base label!')
 		self.main_text.move(100, 240)  # move in window (relative coordinate)
 		self.main_text.adjustSize()
 
-		# self.second_text = QtWidgets.QLabel(self)
+		self.second_text = QtWidgets.QLabel(self)
 
 		self.button = QtWidgets.QPushButton(self)
 		self.button.move(70, 150)
@@ -40,10 +40,7 @@ class Window(QtWidgets.QWidget):
 
 def create_app():
 	app = QtWidgets.QApplication(sys.argv)
-	print('asdasd')
-
 	name = Window()
-
 	name.show()
 	# print(Window.mro())  # rules entry
 	sys.exit(app.exec())

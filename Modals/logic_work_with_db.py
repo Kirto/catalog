@@ -88,5 +88,5 @@ def load_one_item_by_ozm_from_db(table_name: str, ozm_number: int) -> ():
 
 
 if __name__ == "__main__":
-    pass
     # print(load_one_item_by_ozm_from_db('Items', 707801))    # ozm = 707801  for tests
+    print()
