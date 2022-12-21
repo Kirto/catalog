@@ -17,15 +17,8 @@ class Window(QtWidgets.QMainWindow):
 
 		super().__init__()
 
-		self.setWindowTitle('Catalog')
-		self.setGeometry(300, 250, 500, 500)
-
-		self.main_text = QtWidgets.QLabel(self)
-		self.main_text.setText('This is base label!')
-		self.main_text.move(100, 240)  # move in window (relative coordinate)
-		self.main_text.adjustSize()
-
-		self.second_text = QtWidgets.QLabel(self)
+		self.setWindowTitle(config.NAME_GUI)
+		self.setGeometry(config.OFFSETX, config.OFFSETY, config.WIDTH, config.HEIGHT)
 
 		self.button = QtWidgets.QPushButton(self)
 		self.button.move(70, 150)
@@ -34,8 +27,11 @@ class Window(QtWidgets.QMainWindow):
 		self.button.clicked.connect(self.clicked_button)
 
 	def clicked_button(self):
-		self.second_text.setText('New label')
-		self.second_text.move(100, 10)
+		pass
+
+
+def ui_create_app():
+	pass
 
 
 def create_app():
@@ -43,8 +39,11 @@ def create_app():
 	name = Window()
 	name.show()
 	# print(Window.mro())  # rules entry
-	sys.exit(app.exec())
+	sys.exit(app.exec_())
 
 
 if __name__ == '__main__':
 	create_app()
+
+
+# pyuic5 -x .\main_window_1.ui -o .\main_window_1.py
