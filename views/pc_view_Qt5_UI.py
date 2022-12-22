@@ -3,7 +3,7 @@
 This block created GUI for view information from postgres database.
 
 Author: Kirto
-version: zero
+Version: 0.1
 """
 
 from PyQt5 import QtCore, QtGui, QtWidgets
@@ -152,13 +152,13 @@ class UiMainWindow(object):
 		self.select_tab_panel.setTabText(self.select_tab_panel.indexOf(self.settings_tab),
 										 _translate("MainWindow", "Настройки"))
 		self.menu_file.setTitle(_translate("MainWindow", "Файл"))
-		self.menu_file_export_to.setTitle(_translate("MainWindow", "Export ..."))
+		self.menu_file_export_to.setTitle(_translate("MainWindow", "Импорт ..."))
 		self.menu_about.setTitle(_translate("MainWindow", "О программе"))
-		self.menu_file_connect.setText(_translate("MainWindow", "Connect ..."))
+		self.menu_file_connect.setText(_translate("MainWindow", "Подключить ..."))
 		self.action.setText(_translate("MainWindow", "-------------------"))
-		self.menu_file_exit.setText(_translate("MainWindow", "Exit ...."))
-		self.menu_about_help.setText(_translate("MainWindow", "Help ..."))
-		self.menu_file_export_to_svc.setText(_translate("MainWindow", "to *.svc ...."))
+		self.menu_file_exit.setText(_translate("MainWindow", "Выход ...."))
+		self.menu_about_help.setText(_translate("MainWindow", "Помощь ..."))
+		self.menu_file_export_to_svc.setText(_translate("MainWindow", "в *.svc ...."))
 
 
 class UiFormChangingParametersInDb(object):
@@ -390,7 +390,7 @@ if __name__ == '__main__':
 	# create_app()     # old UI
 	ui_create_app()  # new UI
 
-# From directory catalog make command for compile *.ui to *.py
+# From directory catalog make command in terminal for compile *.ui to *.py
 # pyuic5 -x .\views\qt_windows\main_window.ui -o .\views\qt_to_py_windows\main_window.py
 # pyuic5 -x .\views\qt_windows\connect_to_db.ui -o .\views\qt_to_py_windows\connect_to_db.py
 # pyuic5 -x .\views\qt_windows\change_values_item_in_db.ui -o .\views\qt_to_py_windows\change_values_item_in_db.py
