@@ -36,11 +36,12 @@ class UiMainWindow(object):
 
 	# Main settings
 	def setup_ui(self, MainWindow):
-		MainWindow.setObjectName("MainWindow")
-		MainWindow.resize(1075, 767)
+		MainWindow.setObjectName(config.NAME_GUI)
+		MainWindow.resize(config.WIDTH_MAIN, config.HEIGHT_MAIN)
 		icon = QtGui.QIcon()
-		icon.addPixmap(QtGui.QPixmap("ico_gui.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+		icon.addPixmap(QtGui.QPixmap(config.PNG_ICO_PATH), QtGui.QIcon.Normal, QtGui.QIcon.Off)
 		MainWindow.setWindowIcon(icon)
+
 		self.main_wrapper = QtWidgets.QWidget(MainWindow)
 		self.main_wrapper.setObjectName("main_wrapper")
 		self.select_tab_panel = QtWidgets.QTabWidget(self.main_wrapper)
@@ -166,11 +167,12 @@ class UiFormChangingParametersInDb(object):
 		super(UiFormChangingParametersInDb, self).__init__()
 
 	def setup_ui(self, form_changing_parameters_in_db):
-		form_changing_parameters_in_db.setObjectName("form_changing_parameters_in_db")
-		form_changing_parameters_in_db.resize(918, 469)
+		form_changing_parameters_in_db.setObjectName(config.NAME_GUI_CHANGE_ITEM)
+		form_changing_parameters_in_db.resize(config.WIDTH_CHANGE, config.HEIGHT_CHANGE)
 		icon = QtGui.QIcon()
-		icon.addPixmap(QtGui.QPixmap("ico_gui.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+		icon.addPixmap(QtGui.QPixmap(config.PNG_ICO_PATH), QtGui.QIcon.Normal, QtGui.QIcon.Off)
 		form_changing_parameters_in_db.setWindowIcon(icon)
+
 		self.parameters_combo_box = QtWidgets.QGroupBox(form_changing_parameters_in_db)
 		self.parameters_combo_box.setGeometry(QtCore.QRect(10, 0, 901, 401))
 		self.parameters_combo_box.setObjectName("parameters_combo_box")
@@ -274,10 +276,10 @@ class UiFormConnectToDB(object):
 		super(UiFormConnectToDB, self).__init__()
 
 	def setup_ui(self, form_connect_to_db):
-		form_connect_to_db.setObjectName("form_connect_to_db")
-		form_connect_to_db.resize(647, 289)
+		form_connect_to_db.setObjectName(config.NAME_GUI_CONNECT)
+		form_connect_to_db.resize(config.WIDTH_CONNECT, config.HEIGHT_CONNECT)
 		icon = QtGui.QIcon()
-		icon.addPixmap(QtGui.QPixmap("ico_gui.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+		icon.addPixmap(QtGui.QPixmap(config.PNG_ICO_PATH), QtGui.QIcon.Normal, QtGui.QIcon.Off)
 		form_connect_to_db.setWindowIcon(icon)
 		self.parameters_combo_box = QtWidgets.QGroupBox(form_connect_to_db)
 		self.parameters_combo_box.setGeometry(QtCore.QRect(0, 0, 641, 241))
