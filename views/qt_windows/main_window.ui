@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1075</width>
+    <width>1070</width>
     <height>767</height>
    </rect>
   </property>
@@ -17,8 +17,8 @@
    <iconset>
     <normaloff>../ico_gui.png</normaloff>../ico_gui.png</iconset>
   </property>
-  <widget class="QWidget" name="centralwidget">
-   <widget class="QTabWidget" name="tabWidget">
+  <widget class="QWidget" name="main_wrapper">
+   <widget class="QTabWidget" name="select_tab_panel">
     <property name="enabled">
      <bool>true</bool>
     </property>
@@ -33,11 +33,11 @@
     <property name="currentIndex">
      <number>0</number>
     </property>
-    <widget class="QWidget" name="tab">
+    <widget class="QWidget" name="main_tab">
      <attribute name="title">
       <string>Основная часть</string>
      </attribute>
-     <widget class="QGroupBox" name="groupBox">
+     <widget class="QGroupBox" name="result_combo_box">
       <property name="geometry">
        <rect>
         <x>0</x>
@@ -49,7 +49,7 @@
       <property name="title">
        <string>Результат</string>
       </property>
-      <widget class="QListView" name="listView">
+      <widget class="QListView" name="result_list_view">
        <property name="geometry">
         <rect>
          <x>10</x>
@@ -60,7 +60,7 @@
        </property>
       </widget>
      </widget>
-     <widget class="QGroupBox" name="groupBox_2">
+     <widget class="QGroupBox" name="search_combo_box">
       <property name="geometry">
        <rect>
         <x>10</x>
@@ -89,10 +89,10 @@
          <number>10</number>
         </property>
         <item>
-         <widget class="QLineEdit" name="lineEdit"/>
+         <widget class="QLineEdit" name="search_text"/>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton">
+         <widget class="QPushButton" name="search_button">
           <property name="text">
            <string>Поиск ...</string>
           </property>
@@ -101,7 +101,7 @@
        </layout>
       </widget>
      </widget>
-     <widget class="QGroupBox" name="groupBox_3">
+     <widget class="QGroupBox" name="commands_combo_box">
       <property name="geometry">
        <rect>
         <x>0</x>
@@ -130,28 +130,28 @@
          <number>10</number>
         </property>
         <item row="0" column="2">
-         <widget class="QPushButton" name="pushButton_4">
+         <widget class="QPushButton" name="command_undo_button">
           <property name="text">
            <string>Отменить</string>
           </property>
          </widget>
         </item>
         <item row="0" column="1">
-         <widget class="QPushButton" name="pushButton_3">
+         <widget class="QPushButton" name="command_save_button">
           <property name="text">
            <string>Сохранить</string>
           </property>
          </widget>
         </item>
         <item row="0" column="0">
-         <widget class="QPushButton" name="pushButton_2">
+         <widget class="QPushButton" name="command_change_button">
           <property name="text">
            <string>Изменить</string>
           </property>
          </widget>
         </item>
         <item row="0" column="3">
-         <widget class="QPushButton" name="pushButton_5">
+         <widget class="QPushButton" name="command_exit_button">
           <property name="text">
            <string>Выйти</string>
           </property>
@@ -161,48 +161,48 @@
       </widget>
      </widget>
     </widget>
-    <widget class="QWidget" name="tab_2">
+    <widget class="QWidget" name="settings_tab">
      <attribute name="title">
       <string>Настройки</string>
      </attribute>
     </widget>
    </widget>
   </widget>
-  <widget class="QMenuBar" name="menubar">
+  <widget class="QMenuBar" name="menu_bar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1075</width>
+     <width>1070</width>
      <height>26</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menu">
+   <widget class="QMenu" name="menu_file">
     <property name="title">
      <string>Файл</string>
     </property>
-    <widget class="QMenu" name="menuExport">
+    <widget class="QMenu" name="menu_file_export_to">
      <property name="title">
       <string>Export ...</string>
      </property>
-     <addaction name="actionto_svc"/>
+     <addaction name="menu_file_export_to_svc"/>
     </widget>
-    <addaction name="actionConnect"/>
-    <addaction name="menuExport"/>
+    <addaction name="menu_file_connect"/>
+    <addaction name="menu_file_export_to"/>
     <addaction name="separator"/>
-    <addaction name="actionExit"/>
+    <addaction name="menu_file_exit"/>
    </widget>
-   <widget class="QMenu" name="menu_2">
+   <widget class="QMenu" name="menu_about">
     <property name="title">
      <string>О программе</string>
     </property>
-    <addaction name="actionHelp"/>
+    <addaction name="menu_about_help"/>
    </widget>
-   <addaction name="menu"/>
-   <addaction name="menu_2"/>
+   <addaction name="menu_file"/>
+   <addaction name="menu_about"/>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
-  <action name="actionConnect">
+  <widget class="QStatusBar" name="status_bar"/>
+  <action name="menu_file_connect">
    <property name="text">
     <string>Connect ...</string>
    </property>
@@ -218,17 +218,17 @@
     <string>-------------------</string>
    </property>
   </action>
-  <action name="actionExit">
+  <action name="menu_file_exit">
    <property name="text">
     <string>Exit ....</string>
    </property>
   </action>
-  <action name="actionHelp">
+  <action name="menu_about_help">
    <property name="text">
     <string>Help ...</string>
    </property>
   </action>
-  <action name="actionto_svc">
+  <action name="menu_file_export_to_svc">
    <property name="text">
     <string>to *.svc ....</string>
    </property>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Dialog</class>
- <widget class="QDialog" name="Dialog">
+ <class>form_connect_to_db</class>
+ <widget class="QDialog" name="form_connect_to_db">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -17,7 +17,7 @@
    <iconset>
     <normaloff>../ico_gui.png</normaloff>../ico_gui.png</iconset>
   </property>
-  <widget class="QGroupBox" name="groupBox">
+  <widget class="QGroupBox" name="parameters_combo_box">
    <property name="geometry">
     <rect>
      <x>0</x>
@@ -29,7 +29,7 @@
    <property name="title">
     <string>Параметры</string>
    </property>
-   <widget class="QLabel" name="label">
+   <widget class="QLabel" name="parameters_fault_label">
     <property name="enabled">
      <bool>false</bool>
     </property>
@@ -45,7 +45,7 @@
      <string>ОШИБКА</string>
     </property>
    </widget>
-   <widget class="QCheckBox" name="checkBox">
+   <widget class="QCheckBox" name="parameters_check_save_parametrs">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -58,7 +58,7 @@
      <string>Сохранить параметры</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_2">
+   <widget class="QLabel" name="parameters_host_label">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -71,7 +71,7 @@
      <string>Хост:</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_3">
+   <widget class="QLabel" name="parameters_name_db_label">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -84,7 +84,7 @@
      <string>База данных:</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_4">
+   <widget class="QLabel" name="parameters_user_name_label">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -97,7 +97,7 @@
      <string>Пользователь:</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_5">
+   <widget class="QLabel" name="parameters_password_label">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -110,7 +110,7 @@
      <string>Пароль:</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_6">
+   <widget class="QLabel" name="parameters_port_label">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -123,7 +123,7 @@
      <string>Порт:</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="lineEdit">
+   <widget class="QLineEdit" name="parameters_host_text">
     <property name="geometry">
      <rect>
       <x>140</x>
@@ -133,7 +133,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QLineEdit" name="lineEdit_2">
+   <widget class="QLineEdit" name="parameters_port_text">
     <property name="geometry">
      <rect>
       <x>140</x>
@@ -143,7 +143,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QLineEdit" name="lineEdit_3">
+   <widget class="QLineEdit" name="parameters_name_db_text">
     <property name="geometry">
      <rect>
       <x>140</x>
@@ -153,7 +153,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QLineEdit" name="lineEdit_4">
+   <widget class="QLineEdit" name="parameters_user_name_text">
     <property name="geometry">
      <rect>
       <x>140</x>
@@ -163,7 +163,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QLineEdit" name="lineEdit_5">
+   <widget class="QLineEdit" name="parameters_password_text">
     <property name="geometry">
      <rect>
       <x>140</x>
@@ -179,7 +179,7 @@
      <string extracomment="Введите пароль"/>
     </property>
    </widget>
-   <widget class="QCheckBox" name="checkBox_2">
+   <widget class="QCheckBox" name="parameters_check_default_connect_settings">
     <property name="geometry">
      <rect>
       <x>210</x>
@@ -193,7 +193,7 @@
     </property>
    </widget>
   </widget>
-  <widget class="QPushButton" name="pushButton">
+  <widget class="QPushButton" name="connect_to_db_button">
    <property name="geometry">
     <rect>
      <x>402</x>
@@ -206,7 +206,7 @@
     <string>Подключиться</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton_2">
+  <widget class="QPushButton" name="cancel_connect_to_db_button">
    <property name="geometry">
     <rect>
      <x>530</x>

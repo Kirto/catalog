@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Dialog</class>
- <widget class="QDialog" name="Dialog">
+ <class>form_changing_parameters_in_db</class>
+ <widget class="QDialog" name="form_changing_parameters_in_db">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -17,7 +17,7 @@
    <iconset>
     <normaloff>../ico_gui.png</normaloff>../ico_gui.png</iconset>
   </property>
-  <widget class="QGroupBox" name="groupBox">
+  <widget class="QGroupBox" name="parameters_combo_box">
    <property name="geometry">
     <rect>
      <x>10</x>
@@ -29,7 +29,7 @@
    <property name="title">
     <string>Параметры для изменения</string>
    </property>
-   <widget class="QGroupBox" name="groupBox_2">
+   <widget class="QGroupBox" name="parameters_item_in_db_combo_box">
     <property name="geometry">
      <rect>
       <x>0</x>
@@ -65,24 +65,24 @@
        </spacer>
       </item>
       <item row="4" column="1">
-       <widget class="QSpinBox" name="spinBox">
+       <widget class="QSpinBox" name="parameters_quantity_item_in_db_spin_box">
         <property name="alignment">
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
        </widget>
       </item>
       <item row="1" column="0">
-       <widget class="QLabel" name="label_4">
+       <widget class="QLabel" name="parameters_id_item_in_db_label">
         <property name="text">
          <string>ID предмета в базе:</string>
         </property>
        </widget>
       </item>
       <item row="3" column="1" colspan="2">
-       <widget class="QTextEdit" name="textEdit"/>
+       <widget class="QTextEdit" name="parameters_description_item_in_db_text"/>
       </item>
       <item row="1" column="1">
-       <widget class="QLineEdit" name="lineEdit">
+       <widget class="QLineEdit" name="parameters_id_item_in_db_text">
         <property name="acceptDrops">
          <bool>true</bool>
         </property>
@@ -95,7 +95,7 @@
        </widget>
       </item>
       <item row="2" column="0">
-       <widget class="QLabel" name="label">
+       <widget class="QLabel" name="parameters_name_item_in_db_label">
         <property name="text">
          <string>Имя:</string>
         </property>
@@ -105,26 +105,26 @@
        </widget>
       </item>
       <item row="3" column="0">
-       <widget class="QLabel" name="label_2">
+       <widget class="QLabel" name="parameters_description_item_in_db_label">
         <property name="text">
          <string>Описание предмета:</string>
         </property>
        </widget>
       </item>
       <item row="4" column="0">
-       <widget class="QLabel" name="label_3">
+       <widget class="QLabel" name="parameters_quantity_item_in_db_label">
         <property name="text">
          <string>Количество предмета на складе:</string>
         </property>
        </widget>
       </item>
       <item row="2" column="1" colspan="2">
-       <widget class="QLineEdit" name="lineEdit_2"/>
+       <widget class="QLineEdit" name="parameters_name_item_in_db_text"/>
       </item>
      </layout>
     </widget>
    </widget>
-   <widget class="QGroupBox" name="groupBox_3">
+   <widget class="QGroupBox" name="parameters_location_in_warehouse_combo_box">
     <property name="geometry">
      <rect>
       <x>610</x>
@@ -136,7 +136,7 @@
     <property name="title">
      <string>Расположение</string>
     </property>
-    <widget class="QLabel" name="label_6">
+    <widget class="QLabel" name="parameters_shelf_location_in_warehouse_label">
      <property name="geometry">
       <rect>
        <x>40</x>
@@ -149,7 +149,7 @@
       <string>Полка:</string>
      </property>
     </widget>
-    <widget class="QLabel" name="label_5">
+    <widget class="QLabel" name="parameters_row_location_in_warehouse_label">
      <property name="geometry">
       <rect>
        <x>40</x>
@@ -162,7 +162,7 @@
       <string>Ряд:</string>
      </property>
     </widget>
-    <widget class="QSpinBox" name="spinBox_2">
+    <widget class="QSpinBox" name="parameters_row_location_in_warehouse_spin_box">
      <property name="geometry">
       <rect>
        <x>110</x>
@@ -175,7 +175,7 @@
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
      </property>
     </widget>
-    <widget class="QSpinBox" name="spinBox_3">
+    <widget class="QSpinBox" name="parameters_shelf_location_in_warehouse_spin_box">
      <property name="geometry">
       <rect>
        <x>110</x>
@@ -190,7 +190,7 @@
     </widget>
    </widget>
   </widget>
-  <widget class="QPushButton" name="pushButton">
+  <widget class="QPushButton" name="save_button">
    <property name="geometry">
     <rect>
      <x>680</x>
@@ -203,7 +203,7 @@
     <string>Сохранить</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton_2">
+  <widget class="QPushButton" name="cancel_button">
    <property name="geometry">
     <rect>
      <x>800</x>
