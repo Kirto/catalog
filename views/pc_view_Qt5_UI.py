@@ -9,12 +9,12 @@ Version: 0.1
 from PyQt5 import QtCore, QtGui, QtWidgets
 import variables as config
 import sys
+import os
 
 
 class Window(QtWidgets.QMainWindow):
 
 	def __init__(self):
-
 		super().__init__()
 
 		self.setWindowTitle(config.NAME_GUI)
@@ -34,95 +34,174 @@ class UiMainWindow(object):
 	def __init__(self):
 		super(UiMainWindow, self).__init__()
 
+	def update_search_button_when_no_search_text(self, text: str):
+		if text:
+			self.search_button.setEnabled(True)
+		else:
+			self.search_button.setEnabled(False)
+
+	@staticmethod
+	def exit_push_button():
+		exit()
+
+	@staticmethod
+	def exit_menu_action():
+		exit()
+
+	def change_parameters_in_item_in_db(self):
+		print('change')
+
+	def save_parameters_in_item_into_db(self):
+		print('save')
+
+	def stay_parameters_in_prev_state_of_item_in_db(self):
+		print('cancel')
+
+	def search_item_in_db(self):
+		print('search ....')
+
+	def action_file_connect_to_db(self):
+		print('File -> connect')
+
+	def action_file_export_to_svc(self):
+		print('File -> Export -> to *.svc')
+
+	def action_about_help(self):
+		print('About -> Help')
+
 	# Main settings
 	def setup_ui(self, MainWindow):
 		MainWindow.setObjectName(config.NAME_GUI)
-		MainWindow.resize(config.WIDTH_MAIN, config.HEIGHT_MAIN)
+		MainWindow.setFixedSize(config.WIDTH_MAIN, config.HEIGHT_MAIN)
 		icon = QtGui.QIcon()
 		icon.addPixmap(QtGui.QPixmap(config.PNG_ICO_PATH), QtGui.QIcon.Normal, QtGui.QIcon.Off)
 		MainWindow.setWindowIcon(icon)
 
 		self.main_wrapper = QtWidgets.QWidget(MainWindow)
 		self.main_wrapper.setObjectName("main_wrapper")
+
 		self.select_tab_panel = QtWidgets.QTabWidget(self.main_wrapper)
 		self.select_tab_panel.setEnabled(True)
 		self.select_tab_panel.setGeometry(QtCore.QRect(0, 0, 1071, 711))
 		self.select_tab_panel.setObjectName("select_tab_panel")
+
 		self.main_tab = QtWidgets.QWidget()
 		self.main_tab.setObjectName("main_tab")
+
 		self.result_combo_box = QtWidgets.QGroupBox(self.main_tab)
 		self.result_combo_box.setGeometry(QtCore.QRect(0, 100, 1061, 461))
 		self.result_combo_box.setObjectName("result_combo_box")
+
 		self.result_list_view = QtWidgets.QListView(self.result_combo_box)
 		self.result_list_view.setGeometry(QtCore.QRect(10, 30, 1041, 421))
 		self.result_list_view.setObjectName("result_list_view")
+
 		self.search_combo_box = QtWidgets.QGroupBox(self.main_tab)
 		self.search_combo_box.setGeometry(QtCore.QRect(10, 10, 1051, 81))
 		self.search_combo_box.setObjectName("search_combo_box")
+
 		self.horizontalLayoutWidget = QtWidgets.QWidget(self.search_combo_box)
 		self.horizontalLayoutWidget.setGeometry(QtCore.QRect(10, 10, 1031, 61))
 		self.horizontalLayoutWidget.setObjectName("horizontalLayoutWidget")
+
 		self.horizontalLayout = QtWidgets.QHBoxLayout(self.horizontalLayoutWidget)
 		self.horizontalLayout.setContentsMargins(10, 0, 10, 0)
 		self.horizontalLayout.setObjectName("horizontalLayout")
+
 		self.search_text = QtWidgets.QLineEdit(self.horizontalLayoutWidget)
 		self.search_text.setObjectName("search_text")
+		self.search_text.textChanged.connect(self.update_search_button_when_no_search_text)
+
 		self.horizontalLayout.addWidget(self.search_text)
+
 		self.search_button = QtWidgets.QPushButton(self.horizontalLayoutWidget)
 		self.search_button.setObjectName("search_button")
+		self.search_button.setEnabled(False)
+		self.search_button.clicked.connect(self.search_item_in_db)
+
 		self.horizontalLayout.addWidget(self.search_button)
+
 		self.commands_combo_box = QtWidgets.QGroupBox(self.main_tab)
 		self.commands_combo_box.setGeometry(QtCore.QRect(0, 570, 1061, 101))
 		self.commands_combo_box.setObjectName("commands_combo_box")
+
 		self.gridLayoutWidget = QtWidgets.QWidget(self.commands_combo_box)
 		self.gridLayoutWidget.setGeometry(QtCore.QRect(10, 20, 1041, 71))
 		self.gridLayoutWidget.setObjectName("gridLayoutWidget")
+
 		self.gridLayout = QtWidgets.QGridLayout(self.gridLayoutWidget)
 		self.gridLayout.setContentsMargins(10, 0, 10, 0)
 		self.gridLayout.setObjectName("gridLayout")
+
 		self.command_undo_button = QtWidgets.QPushButton(self.gridLayoutWidget)
 		self.command_undo_button.setObjectName("command_undo_button")
 		self.gridLayout.addWidget(self.command_undo_button, 0, 2, 1, 1)
+		# self.command_undo_button.setEnabled(False)
+		self.command_undo_button.clicked.connect(self.stay_parameters_in_prev_state_of_item_in_db)
+
 		self.command_save_button = QtWidgets.QPushButton(self.gridLayoutWidget)
 		self.command_save_button.setObjectName("command_save_button")
 		self.gridLayout.addWidget(self.command_save_button, 0, 1, 1, 1)
+		# self.command_save_button.setEnabled(False)
+		self.command_save_button.clicked.connect(self.save_parameters_in_item_into_db)
+
 		self.command_change_button = QtWidgets.QPushButton(self.gridLayoutWidget)
 		self.command_change_button.setObjectName("command_change_button")
 		self.gridLayout.addWidget(self.command_change_button, 0, 0, 1, 1)
+		# self.command_change_button.setEnabled(False)
+		self.command_change_button.clicked.connect(self.change_parameters_in_item_in_db)
+
 		self.command_exit_button = QtWidgets.QPushButton(self.gridLayoutWidget)
 		self.command_exit_button.setObjectName("command_exit_button")
 		self.gridLayout.addWidget(self.command_exit_button, 0, 3, 1, 1)
+		self.command_exit_button.clicked.connect(self.exit_push_button)
+
 		self.select_tab_panel.addTab(self.main_tab, "")
 		self.settings_tab = QtWidgets.QWidget()
 		self.settings_tab.setObjectName("settings_tab")
 		self.select_tab_panel.addTab(self.settings_tab, "")
 		MainWindow.setCentralWidget(self.main_wrapper)
+
 		self.menu_bar = QtWidgets.QMenuBar(MainWindow)
 		self.menu_bar.setGeometry(QtCore.QRect(0, 0, 1070, 26))
 		self.menu_bar.setObjectName("menu_bar")
+
 		self.menu_file = QtWidgets.QMenu(self.menu_bar)
 		self.menu_file.setObjectName("menu_file")
+
 		self.menu_file_export_to = QtWidgets.QMenu(self.menu_file)
 		self.menu_file_export_to.setObjectName("menu_file_export_to")
+
 		self.menu_about = QtWidgets.QMenu(self.menu_bar)
 		self.menu_about.setObjectName("menu_about")
 		MainWindow.setMenuBar(self.menu_bar)
+
 		self.status_bar = QtWidgets.QStatusBar(MainWindow)
 		self.status_bar.setObjectName("status_bar")
 		MainWindow.setStatusBar(self.status_bar)
+
 		self.menu_file_connect = QtWidgets.QAction(MainWindow)
 		self.menu_file_connect.setObjectName("menu_file_connect")
+		self.menu_file_connect.triggered.connect(self.action_file_connect_to_db)
+
 		self.action = QtWidgets.QAction(MainWindow)
 		self.action.setCheckable(False)
 		self.action.setEnabled(False)
 		self.action.setObjectName("action")
+
 		self.menu_file_exit = QtWidgets.QAction(MainWindow)
 		self.menu_file_exit.setObjectName("menu_file_exit")
+		self.menu_file_exit.triggered.connect(self.exit_menu_action)
+
 		self.menu_about_help = QtWidgets.QAction(MainWindow)
 		self.menu_about_help.setObjectName("menu_about_help")
+		self.menu_about_help.triggered.connect(self.action_about_help)
+
 		self.menu_file_export_to_svc = QtWidgets.QAction(MainWindow)
 		self.menu_file_export_to_svc.setObjectName("menu_file_export_to_svc")
+		self.menu_file_export_to_svc.triggered.connect(self.action_file_export_to_svc)
 		self.menu_file_export_to.addAction(self.menu_file_export_to_svc)
+
 		self.menu_file.addAction(self.menu_file_connect)
 		self.menu_file.addAction(self.menu_file_export_to.menuAction())
 		self.menu_file.addSeparator()
@@ -148,9 +227,9 @@ class UiMainWindow(object):
 		self.command_change_button.setText(_translate("MainWindow", "Изменить"))
 		self.command_exit_button.setText(_translate("MainWindow", "Выйти"))
 		self.select_tab_panel.setTabText(self.select_tab_panel.indexOf(self.main_tab),
-										 _translate("MainWindow", "Основная часть"))
+		                                 _translate("MainWindow", "Основная часть"))
 		self.select_tab_panel.setTabText(self.select_tab_panel.indexOf(self.settings_tab),
-										 _translate("MainWindow", "Настройки"))
+		                                 _translate("MainWindow", "Настройки"))
 		self.menu_file.setTitle(_translate("MainWindow", "Файл"))
 		self.menu_file_export_to.setTitle(_translate("MainWindow", "Импорт ..."))
 		self.menu_about.setTitle(_translate("MainWindow", "О программе"))
@@ -168,7 +247,7 @@ class UiFormChangingParametersInDb(object):
 
 	def setup_ui(self, form_changing_parameters_in_db):
 		form_changing_parameters_in_db.setObjectName(config.NAME_GUI_CHANGE_ITEM)
-		form_changing_parameters_in_db.resize(config.WIDTH_CHANGE, config.HEIGHT_CHANGE)
+		form_changing_parameters_in_db.setFixedSize(config.WIDTH_CHANGE, config.HEIGHT_CHANGE)
 		icon = QtGui.QIcon()
 		icon.addPixmap(QtGui.QPixmap(config.PNG_ICO_PATH), QtGui.QIcon.Normal, QtGui.QIcon.Off)
 		form_changing_parameters_in_db.setWindowIcon(icon)
@@ -224,7 +303,8 @@ class UiFormChangingParametersInDb(object):
 			self.parameters_location_in_warehouse_combo_box)
 		self.parameters_shelf_location_in_warehouse_label.setGeometry(QtCore.QRect(40, 50, 55, 16))
 		self.parameters_shelf_location_in_warehouse_label.setObjectName("parameters_shelf_location_in_warehouse_label")
-		self.parameters_row_location_in_warehouse_label = QtWidgets.QLabel(self.parameters_location_in_warehouse_combo_box)
+		self.parameters_row_location_in_warehouse_label = QtWidgets.QLabel(
+			self.parameters_location_in_warehouse_combo_box)
 		self.parameters_row_location_in_warehouse_label.setGeometry(QtCore.QRect(40, 20, 55, 16))
 		self.parameters_row_location_in_warehouse_label.setObjectName("parameters_row_location_in_warehouse_label")
 		self.parameters_row_location_in_warehouse_spin_box = QtWidgets.QSpinBox(
@@ -232,7 +312,8 @@ class UiFormChangingParametersInDb(object):
 		self.parameters_row_location_in_warehouse_spin_box.setGeometry(QtCore.QRect(110, 20, 151, 22))
 		self.parameters_row_location_in_warehouse_spin_box.setAlignment(
 			QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
-		self.parameters_row_location_in_warehouse_spin_box.setObjectName("parameters_row_location_in_warehouse_spin_box")
+		self.parameters_row_location_in_warehouse_spin_box.setObjectName(
+			"parameters_row_location_in_warehouse_spin_box")
 		self.parameters_shelf_location_in_warehouse_spin_box = QtWidgets.QSpinBox(
 			self.parameters_location_in_warehouse_combo_box)
 		self.parameters_shelf_location_in_warehouse_spin_box.setGeometry(QtCore.QRect(110, 50, 151, 22))
@@ -264,7 +345,8 @@ class UiFormChangingParametersInDb(object):
 			_translate("form_changing_parameters_in_db", "Количество предмета на складе:"))
 		self.parameters_location_in_warehouse_combo_box.setTitle(
 			_translate("form_changing_parameters_in_db", "Расположение"))
-		self.parameters_shelf_location_in_warehouse_label.setText(_translate("form_changing_parameters_in_db", "Полка:"))
+		self.parameters_shelf_location_in_warehouse_label.setText(
+			_translate("form_changing_parameters_in_db", "Полка:"))
 		self.parameters_row_location_in_warehouse_label.setText(_translate("form_changing_parameters_in_db", "Ряд:"))
 		self.save_button.setText(_translate("form_changing_parameters_in_db", "Сохранить"))
 		self.cancel_button.setText(_translate("form_changing_parameters_in_db", "Отмена"))
@@ -277,7 +359,7 @@ class UiFormConnectToDB(object):
 
 	def setup_ui(self, form_connect_to_db):
 		form_connect_to_db.setObjectName(config.NAME_GUI_CONNECT)
-		form_connect_to_db.resize(config.WIDTH_CONNECT, config.HEIGHT_CONNECT)
+		form_connect_to_db.setFixedSize(config.WIDTH_CONNECT, config.HEIGHT_CONNECT)
 		icon = QtGui.QIcon()
 		icon.addPixmap(QtGui.QPixmap(config.PNG_ICO_PATH), QtGui.QIcon.Normal, QtGui.QIcon.Off)
 		form_connect_to_db.setWindowIcon(icon)
@@ -347,7 +429,10 @@ class UiFormConnectToDB(object):
 		self.parameters_user_name_label.setText(_translate("form_connect_to_db", "Пользователь:"))
 		self.parameters_password_label.setText(_translate("form_connect_to_db", "Пароль:"))
 		self.parameters_port_label.setText(_translate("form_connect_to_db", "Порт:"))
-		self.parameters_check_default_connect_settings.setText(_translate("form_connect_to_db", "Тестовые параметры подключения (по умолчанию posgress)"))
+		self.parameters_check_default_connect_settings.setText(_translate("form_connect_to_db", "Тестовые параметры "
+		                                                                                        "подключения (по "
+		                                                                                        "умолчанию "
+		                                                                                        "posgress)"))
 		self.connect_to_db_button.setText(_translate("form_connect_to_db", "Подключиться"))
 		self.cancel_connect_to_db_button.setText(_translate("form_connect_to_db", "Отменить"))
 
@@ -371,9 +456,10 @@ def ui_create_app():
 	ui_connect_to_db = UiFormConnectToDB()
 	ui_connect_to_db.setup_ui(connect_to_db_window)
 
+	# Show modules
 	ui_show_module(main_window)
-	ui_show_module(change_params_window)
-	ui_show_module(connect_to_db_window)
+	# ui_show_module(change_params_window)
+	# ui_show_module(connect_to_db_window)
 
 	sys.exit(app.exec_())
 
@@ -386,12 +472,30 @@ def create_app():
 	sys.exit(app.exec_())
 
 
+def add_variables_to_os_environment_from_file(name: str = '.env', sep: str = ' = '):
+	f = open(os.getcwd() + '\\..\\\\' + name, 'rt')
+	ar = []
+	with f:
+		for _ in f:
+			ar.append(_)
+		for _ in ar:
+			s = _.split(sep)
+			if s[1][0] == '\'' or s[1][-1] == '\'':
+				s[1] = s[1][1:-2]
+				if not os.getenv(s[0]):
+					os.environ.setdefault(s[0], s[1])
+			else:
+				if not os.getenv(s[0]):
+					os.environ.setdefault(s[0], s[1])
+
+
 if __name__ == '__main__':
+	# add_variables_to_os_environment_from_file()
 	# create_app()     # old UI
 	ui_create_app()  # new UI
+
 
 # From directory catalog make command in terminal for compile *.ui to *.py
 # pyuic5 -x .\views\qt_windows\main_window.ui -o .\views\qt_to_py_windows\main_window.py
 # pyuic5 -x .\views\qt_windows\connect_to_db.ui -o .\views\qt_to_py_windows\connect_to_db.py
 # pyuic5 -x .\views\qt_windows\change_values_item_in_db.ui -o .\views\qt_to_py_windows\change_values_item_in_db.py
-
