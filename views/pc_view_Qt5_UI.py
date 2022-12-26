@@ -34,6 +34,16 @@ class UiMainWindow(object):
 	def __init__(self):
 		super(UiMainWindow, self).__init__()
 
+		self.data = add_and_receive_variables_to_os_environment_from_file()
+		self.change_params_window = QtWidgets.QMainWindow()
+		self.ui_change_params = UiFormChangingParametersInDb()
+		self.ui_change_params.setup_ui(self.change_params_window)
+
+		self.connect_to_db_window = QtWidgets.QMainWindow()
+		self.data['connect_window'] = self.connect_to_db_window
+		self.ui_connect_to_db = UiFormConnectToDB(self.data)
+		self.ui_connect_to_db.setup_ui(self.connect_to_db_window)
+
 	def update_search_button_when_no_search_text(self, text: str):
 		if text:
 			self.search_button.setEnabled(True)
@@ -49,7 +59,7 @@ class UiMainWindow(object):
 		exit()
 
 	def change_parameters_in_item_in_db(self):
-		print('change')
+		ui_show_module(self.change_params_window)
 
 	def save_parameters_in_item_into_db(self):
 		print('save')
@@ -61,7 +71,8 @@ class UiMainWindow(object):
 		print('search ....')
 
 	def action_file_connect_to_db(self):
-		print('File -> connect')
+		load_connection_default_settings(self.ui_connect_to_db, self.data)
+		ui_show_module(self.connect_to_db_window)
 
 	def action_file_export_to_svc(self):
 		print('File -> Export -> to *.svc')
@@ -255,50 +266,63 @@ class UiFormChangingParametersInDb(object):
 		self.parameters_combo_box = QtWidgets.QGroupBox(form_changing_parameters_in_db)
 		self.parameters_combo_box.setGeometry(QtCore.QRect(10, 0, 901, 401))
 		self.parameters_combo_box.setObjectName("parameters_combo_box")
+
 		self.parameters_item_in_db_combo_box = QtWidgets.QGroupBox(self.parameters_combo_box)
 		self.parameters_item_in_db_combo_box.setGeometry(QtCore.QRect(0, 20, 601, 371))
 		self.parameters_item_in_db_combo_box.setObjectName("parameters_item_in_db_combo_box")
+
 		self.gridLayoutWidget = QtWidgets.QWidget(self.parameters_item_in_db_combo_box)
 		self.gridLayoutWidget.setGeometry(QtCore.QRect(10, 20, 581, 351))
 		self.gridLayoutWidget.setObjectName("gridLayoutWidget")
+
 		self.gridLayout = QtWidgets.QGridLayout(self.gridLayoutWidget)
 		self.gridLayout.setContentsMargins(0, 0, 0, 0)
 		self.gridLayout.setObjectName("gridLayout")
-		spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-		self.gridLayout.addItem(spacerItem, 1, 2, 1, 1)
+		self.__spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+		self.gridLayout.addItem(self.__spacerItem, 1, 2, 1, 1)
+
 		self.parameters_quantity_item_in_db_spin_box = QtWidgets.QSpinBox(self.gridLayoutWidget)
 		self.parameters_quantity_item_in_db_spin_box.setAlignment(
 			QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
 		self.parameters_quantity_item_in_db_spin_box.setObjectName("parameters_quantity_item_in_db_spin_box")
 		self.gridLayout.addWidget(self.parameters_quantity_item_in_db_spin_box, 4, 1, 1, 1)
+
 		self.parameters_id_item_in_db_label = QtWidgets.QLabel(self.gridLayoutWidget)
 		self.parameters_id_item_in_db_label.setObjectName("parameters_id_item_in_db_label")
 		self.gridLayout.addWidget(self.parameters_id_item_in_db_label, 1, 0, 1, 1)
+
 		self.parameters_description_item_in_db_text = QtWidgets.QTextEdit(self.gridLayoutWidget)
 		self.parameters_description_item_in_db_text.setObjectName("parameters_description_item_in_db_text")
 		self.gridLayout.addWidget(self.parameters_description_item_in_db_text, 3, 1, 1, 2)
+
 		self.parameters_id_item_in_db_text = QtWidgets.QLineEdit(self.gridLayoutWidget)
 		self.parameters_id_item_in_db_text.setAcceptDrops(True)
 		self.parameters_id_item_in_db_text.setFrame(True)
 		self.parameters_id_item_in_db_text.setReadOnly(True)
 		self.parameters_id_item_in_db_text.setObjectName("parameters_id_item_in_db_text")
 		self.gridLayout.addWidget(self.parameters_id_item_in_db_text, 1, 1, 1, 1)
+
 		self.parameters_name_item_in_db_label = QtWidgets.QLabel(self.gridLayoutWidget)
 		self.parameters_name_item_in_db_label.setTextFormat(QtCore.Qt.AutoText)
 		self.parameters_name_item_in_db_label.setObjectName("parameters_name_item_in_db_label")
 		self.gridLayout.addWidget(self.parameters_name_item_in_db_label, 2, 0, 1, 1)
+
 		self.parameters_description_item_in_db_label = QtWidgets.QLabel(self.gridLayoutWidget)
 		self.parameters_description_item_in_db_label.setObjectName("parameters_description_item_in_db_label")
 		self.gridLayout.addWidget(self.parameters_description_item_in_db_label, 3, 0, 1, 1)
+
 		self.parameters_quantity_item_in_db_label = QtWidgets.QLabel(self.gridLayoutWidget)
 		self.parameters_quantity_item_in_db_label.setObjectName("parameters_quantity_item_in_db_label")
 		self.gridLayout.addWidget(self.parameters_quantity_item_in_db_label, 4, 0, 1, 1)
+
 		self.parameters_name_item_in_db_text = QtWidgets.QLineEdit(self.gridLayoutWidget)
 		self.parameters_name_item_in_db_text.setObjectName("parameters_name_item_in_db_text")
 		self.gridLayout.addWidget(self.parameters_name_item_in_db_text, 2, 1, 1, 2)
+
 		self.parameters_location_in_warehouse_combo_box = QtWidgets.QGroupBox(self.parameters_combo_box)
 		self.parameters_location_in_warehouse_combo_box.setGeometry(QtCore.QRect(610, 30, 281, 81))
 		self.parameters_location_in_warehouse_combo_box.setObjectName("parameters_location_in_warehouse_combo_box")
+
 		self.parameters_shelf_location_in_warehouse_label = QtWidgets.QLabel(
 			self.parameters_location_in_warehouse_combo_box)
 		self.parameters_shelf_location_in_warehouse_label.setGeometry(QtCore.QRect(40, 50, 55, 16))
@@ -307,6 +331,7 @@ class UiFormChangingParametersInDb(object):
 			self.parameters_location_in_warehouse_combo_box)
 		self.parameters_row_location_in_warehouse_label.setGeometry(QtCore.QRect(40, 20, 55, 16))
 		self.parameters_row_location_in_warehouse_label.setObjectName("parameters_row_location_in_warehouse_label")
+
 		self.parameters_row_location_in_warehouse_spin_box = QtWidgets.QSpinBox(
 			self.parameters_location_in_warehouse_combo_box)
 		self.parameters_row_location_in_warehouse_spin_box.setGeometry(QtCore.QRect(110, 20, 151, 22))
@@ -321,9 +346,11 @@ class UiFormChangingParametersInDb(object):
 			QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
 		self.parameters_shelf_location_in_warehouse_spin_box.setObjectName(
 			"parameters_shelf_location_in_warehouse_spin_box")
+
 		self.save_button = QtWidgets.QPushButton(form_changing_parameters_in_db)
 		self.save_button.setGeometry(QtCore.QRect(680, 420, 93, 28))
 		self.save_button.setObjectName("save_button")
+
 		self.cancel_button = QtWidgets.QPushButton(form_changing_parameters_in_db)
 		self.cancel_button.setGeometry(QtCore.QRect(800, 420, 93, 28))
 		self.cancel_button.setObjectName("cancel_button")
@@ -354,8 +381,15 @@ class UiFormChangingParametersInDb(object):
 
 class UiFormConnectToDB(object):
 
-	def __init__(self):
+	def __init__(self, data: dict):
 		super(UiFormConnectToDB, self).__init__()
+		self.data = data
+
+	def connection_connect_button(self):
+		print('Connect window -> save')
+
+	def connection_cancel_button(self):
+		self.data['connect_window'].close()
 
 	def setup_ui(self, form_connect_to_db):
 		form_connect_to_db.setObjectName(config.NAME_GUI_CONNECT)
@@ -363,66 +397,84 @@ class UiFormConnectToDB(object):
 		icon = QtGui.QIcon()
 		icon.addPixmap(QtGui.QPixmap(config.PNG_ICO_PATH), QtGui.QIcon.Normal, QtGui.QIcon.Off)
 		form_connect_to_db.setWindowIcon(icon)
+
 		self.parameters_combo_box = QtWidgets.QGroupBox(form_connect_to_db)
 		self.parameters_combo_box.setGeometry(QtCore.QRect(0, 0, 641, 241))
 		self.parameters_combo_box.setObjectName("parameters_combo_box")
+
 		self.parameters_fault_label = QtWidgets.QLabel(self.parameters_combo_box)
-		self.parameters_fault_label.setEnabled(False)
+		self.parameters_fault_label.setEnabled(True)
 		self.parameters_fault_label.setGeometry(QtCore.QRect(470, 60, 55, 16))
 		self.parameters_fault_label.setObjectName("parameters_fault_label")
+
 		self.parameters_check_save_parametrs = QtWidgets.QCheckBox(self.parameters_combo_box)
 		self.parameters_check_save_parametrs.setGeometry(QtCore.QRect(20, 190, 161, 20))
 		self.parameters_check_save_parametrs.setObjectName("parameters_check_save_parametrs")
+
 		self.parameters_host_label = QtWidgets.QLabel(self.parameters_combo_box)
 		self.parameters_host_label.setGeometry(QtCore.QRect(20, 30, 55, 16))
 		self.parameters_host_label.setObjectName("parameters_host_label")
+
 		self.parameters_name_db_label = QtWidgets.QLabel(self.parameters_combo_box)
 		self.parameters_name_db_label.setGeometry(QtCore.QRect(20, 90, 91, 16))
 		self.parameters_name_db_label.setObjectName("parameters_name_db_label")
+
 		self.parameters_user_name_label = QtWidgets.QLabel(self.parameters_combo_box)
 		self.parameters_user_name_label.setGeometry(QtCore.QRect(20, 120, 101, 16))
 		self.parameters_user_name_label.setObjectName("parameters_user_name_label")
+
 		self.parameters_password_label = QtWidgets.QLabel(self.parameters_combo_box)
 		self.parameters_password_label.setGeometry(QtCore.QRect(20, 150, 55, 16))
 		self.parameters_password_label.setObjectName("parameters_password_label")
+
 		self.parameters_port_label = QtWidgets.QLabel(self.parameters_combo_box)
 		self.parameters_port_label.setGeometry(QtCore.QRect(20, 60, 55, 16))
 		self.parameters_port_label.setObjectName("parameters_port_label")
+
 		self.parameters_host_text = QtWidgets.QLineEdit(self.parameters_combo_box)
 		self.parameters_host_text.setGeometry(QtCore.QRect(140, 30, 301, 22))
 		self.parameters_host_text.setObjectName("parameters_host_text")
+
 		self.parameters_port_text = QtWidgets.QLineEdit(self.parameters_combo_box)
 		self.parameters_port_text.setGeometry(QtCore.QRect(140, 60, 301, 22))
 		self.parameters_port_text.setObjectName("parameters_port_text")
+
 		self.parameters_name_db_text = QtWidgets.QLineEdit(self.parameters_combo_box)
 		self.parameters_name_db_text.setGeometry(QtCore.QRect(140, 90, 301, 22))
 		self.parameters_name_db_text.setObjectName("parameters_name_db_text")
+
 		self.parameters_user_name_text = QtWidgets.QLineEdit(self.parameters_combo_box)
 		self.parameters_user_name_text.setGeometry(QtCore.QRect(140, 120, 301, 22))
 		self.parameters_user_name_text.setObjectName("parameters_user_name_text")
+
 		self.parameters_password_text = QtWidgets.QLineEdit(self.parameters_combo_box)
 		self.parameters_password_text.setGeometry(QtCore.QRect(140, 150, 301, 22))
 		self.parameters_password_text.setEchoMode(QtWidgets.QLineEdit.Password)
 		self.parameters_password_text.setPlaceholderText("")
 		self.parameters_password_text.setObjectName("parameters_password_text")
+
 		self.parameters_check_default_connect_settings = QtWidgets.QCheckBox(self.parameters_combo_box)
 		self.parameters_check_default_connect_settings.setGeometry(QtCore.QRect(210, 190, 391, 20))
 		self.parameters_check_default_connect_settings.setObjectName("parameters_check_default_connect_settings")
+
 		self.connect_to_db_button = QtWidgets.QPushButton(form_connect_to_db)
 		self.connect_to_db_button.setGeometry(QtCore.QRect(402, 250, 111, 28))
 		self.connect_to_db_button.setObjectName("connect_to_db_button")
+		self.connect_to_db_button.clicked.connect(self.connection_connect_button)
+
 		self.cancel_connect_to_db_button = QtWidgets.QPushButton(form_connect_to_db)
 		self.cancel_connect_to_db_button.setGeometry(QtCore.QRect(530, 250, 93, 28))
 		self.cancel_connect_to_db_button.setObjectName("cancel_connect_to_db_button")
+		self.cancel_connect_to_db_button.clicked.connect(self.connection_cancel_button)
 
 		self.retranslate_ui(form_connect_to_db)
 		QtCore.QMetaObject.connectSlotsByName(form_connect_to_db)
 
 	def retranslate_ui(self, form_connect_to_db):
 		_translate = QtCore.QCoreApplication.translate
-		form_connect_to_db.setWindowTitle(_translate("form_connect_to_db", "Connect to database"))
-		self.parameters_combo_box.setTitle(_translate("form_connect_to_db", "Параметры"))
+		form_connect_to_db.setWindowTitle(_translate("form_connect_to_db", "Подключение к базе данных"))
 		self.parameters_fault_label.setText(_translate("form_connect_to_db", "ОШИБКА"))
+		self.parameters_combo_box.setTitle(_translate("form_connect_to_db", "Параметры"))
 		self.parameters_check_save_parametrs.setText(_translate("form_connect_to_db", "Сохранить параметры"))
 		self.parameters_host_label.setText(_translate("form_connect_to_db", "Хост:"))
 		self.parameters_name_db_label.setText(_translate("form_connect_to_db", "База данных:"))
@@ -448,20 +500,19 @@ def ui_create_app():
 	ui = UiMainWindow()
 	ui.setup_ui(main_window)
 
-	change_params_window = QtWidgets.QMainWindow()
-	ui_change_params = UiFormChangingParametersInDb()
-	ui_change_params.setup_ui(change_params_window)
-
-	connect_to_db_window = QtWidgets.QMainWindow()
-	ui_connect_to_db = UiFormConnectToDB()
-	ui_connect_to_db.setup_ui(connect_to_db_window)
-
-	# Show modules
+	# Show module
 	ui_show_module(main_window)
-	# ui_show_module(change_params_window)
-	# ui_show_module(connect_to_db_window)
 
 	sys.exit(app.exec_())
+
+
+def load_connection_default_settings(name, conf: dict):
+	name.parameters_name_db_text.setText(conf['DB_NAME'])
+	name.parameters_user_name_text.setText(conf['USER_NAME_DB'])
+	name.parameters_host_text.setText(conf['HOST'])
+	name.parameters_port_text.setText(conf['PORT'])
+	name.parameters_password_text.setText(conf['PASSWORD_DB'])
+	name.parameters_check_save_parametrs.setChecked(True)
 
 
 def create_app():
@@ -472,9 +523,10 @@ def create_app():
 	sys.exit(app.exec_())
 
 
-def add_variables_to_os_environment_from_file(name: str = '.env', sep: str = ' = '):
+def add_and_receive_variables_to_os_environment_from_file(name: str = '.env', sep: str = ' = ') -> dict:
 	f = open(os.getcwd() + '\\..\\\\' + name, 'rt')
 	ar = []
+	data = {}
 	with f:
 		for _ in f:
 			ar.append(_)
@@ -484,13 +536,17 @@ def add_variables_to_os_environment_from_file(name: str = '.env', sep: str = ' =
 				s[1] = s[1][1:-2]
 				if not os.getenv(s[0]):
 					os.environ.setdefault(s[0], s[1])
+				data[s[0]] = s[1]
 			else:
 				if not os.getenv(s[0]):
 					os.environ.setdefault(s[0], s[1])
+				data[s[0]] = s[1]
+	return data
 
 
 if __name__ == '__main__':
-	# add_variables_to_os_environment_from_file()
+	# print(add_and_receive_variables_to_os_environment_from_file())
+	# print(os.environ.values())
 	# create_app()     # old UI
 	ui_create_app()  # new UI
 
