@@ -390,6 +390,7 @@ class UiFormConnectToDB(object):
 
 	def connection_connect_button(self):
 		cursor = connect_to_db(self.data)
+		# TODO: below code in this function
 		if cursor:
 			self.data['connect_window'].close()
 
