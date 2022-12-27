@@ -8,6 +8,7 @@ Version: 0.1
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 import variables as config
+import psycopg2 as sql
 import sys
 import os
 
@@ -43,6 +44,9 @@ class UiMainWindow(object):
 		self.data['connect_window'] = self.connect_to_db_window
 		self.ui_connect_to_db = UiFormConnectToDB(self.data)
 		self.ui_connect_to_db.setup_ui(self.connect_to_db_window)
+
+		if int(self.data['DEFAULT_SETTINGS_LOAD']) == 1:
+			self.ui_connect_to_db.parameters_check_default_connect_settings.setChecked(True)
 
 	def update_search_button_when_no_search_text(self, text: str):
 		if text:
@@ -159,7 +163,6 @@ class UiMainWindow(object):
 		self.command_change_button = QtWidgets.QPushButton(self.gridLayoutWidget)
 		self.command_change_button.setObjectName("command_change_button")
 		self.gridLayout.addWidget(self.command_change_button, 0, 0, 1, 1)
-		# self.command_change_button.setEnabled(False)
 		self.command_change_button.clicked.connect(self.change_parameters_in_item_in_db)
 
 		self.command_exit_button = QtWidgets.QPushButton(self.gridLayoutWidget)
@@ -386,10 +389,15 @@ class UiFormConnectToDB(object):
 		self.data = data
 
 	def connection_connect_button(self):
-		print('Connect window -> save')
+		cursor = connect_to_db(self.data)
+		if cursor:
+			self.data['connect_window'].close()
 
 	def connection_cancel_button(self):
 		self.data['connect_window'].close()
+
+	def load_default_if_checked_checkbox(self):
+		load_connection_default_settings(self, self.data)
 
 	def setup_ui(self, form_connect_to_db):
 		form_connect_to_db.setObjectName(config.NAME_GUI_CONNECT)
@@ -456,6 +464,7 @@ class UiFormConnectToDB(object):
 		self.parameters_check_default_connect_settings = QtWidgets.QCheckBox(self.parameters_combo_box)
 		self.parameters_check_default_connect_settings.setGeometry(QtCore.QRect(210, 190, 391, 20))
 		self.parameters_check_default_connect_settings.setObjectName("parameters_check_default_connect_settings")
+		self.parameters_check_default_connect_settings.stateChanged.connect(self.load_default_if_checked_checkbox)
 
 		self.connect_to_db_button = QtWidgets.QPushButton(form_connect_to_db)
 		self.connect_to_db_button.setGeometry(QtCore.QRect(402, 250, 111, 28))
@@ -507,12 +516,18 @@ def ui_create_app():
 
 
 def load_connection_default_settings(name, conf: dict):
-	name.parameters_name_db_text.setText(conf['DB_NAME'])
-	name.parameters_user_name_text.setText(conf['USER_NAME_DB'])
-	name.parameters_host_text.setText(conf['HOST'])
-	name.parameters_port_text.setText(conf['PORT'])
-	name.parameters_password_text.setText(conf['PASSWORD_DB'])
-	name.parameters_check_save_parametrs.setChecked(True)
+	if name.parameters_check_default_connect_settings.isChecked():
+		name.parameters_name_db_text.setText(conf['DB_NAME'])
+		name.parameters_user_name_text.setText(conf['USER_NAME_DB'])
+		name.parameters_host_text.setText(conf['HOST'])
+		name.parameters_port_text.setText(conf['PORT'])
+		name.parameters_password_text.setText(conf['PASSWORD_DB'])
+	else:
+		name.parameters_name_db_text.clear()
+		name.parameters_user_name_text.clear()
+		name.parameters_host_text.clear()
+		name.parameters_port_text.clear()
+		name.parameters_password_text.clear()
 
 
 def create_app():
@@ -544,11 +559,24 @@ def add_and_receive_variables_to_os_environment_from_file(name: str = '.env', se
 	return data
 
 
+def connect_to_db(data: dict):
+	conn_string = "host=" + data['HOST'] + " port=" + data['PORT'] + " dbname=" + \
+				  data['DB_NAME'] + " user=" + data['USER_NAME_DB'] + " password=" + data['PASSWORD_DB']
+	conn = sql.connect(conn_string)
+	cursor = conn.cursor()
+	return cursor
+
+
 if __name__ == '__main__':
 	# print(add_and_receive_variables_to_os_environment_from_file())
 	# print(os.environ.values())
 	# create_app()     # old UI
 	ui_create_app()  # new UI
+
+	# sql_query = f"SELECT * FROM {data['TABLE_NAME']} ORDER BY quantity ASC LIMIT 10"
+	# cursor.execute(sql_query)
+	#
+	# sel = cursor.fetchall()
 
 
 # From directory catalog make command in terminal for compile *.ui to *.py
