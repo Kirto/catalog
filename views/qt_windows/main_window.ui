@@ -49,13 +49,23 @@
       <property name="title">
        <string>Результат</string>
       </property>
-      <widget class="QListView" name="result_list_view">
+      <widget class="QListView" name="result_list_view_bg">
        <property name="geometry">
         <rect>
          <x>10</x>
          <y>30</y>
          <width>1041</width>
          <height>421</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QListWidget" name="result_list_view">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>40</y>
+         <width>1021</width>
+         <height>401</height>
         </rect>
        </property>
       </widget>

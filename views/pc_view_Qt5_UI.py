@@ -45,6 +45,8 @@ class UiMainWindow(object):
 		self.ui_connect_to_db = UiFormConnectToDB(self.data)
 		self.ui_connect_to_db.setup_ui(self.connect_to_db_window)
 
+		self.data['main_window'] = self
+
 		if int(self.data['DEFAULT_SETTINGS_LOAD']) == 1:
 			self.ui_connect_to_db.parameters_check_default_connect_settings.setChecked(True)
 
@@ -84,6 +86,10 @@ class UiMainWindow(object):
 	def action_about_help(self):
 		print('About -> Help')
 
+	def load_data_from_db_to_list(self): # FIXME:____
+		self.result_list_view.clear()
+		load_items_to_list_from_db(self.data)
+
 	# Main settings
 	def setup_ui(self, MainWindow):
 		MainWindow.setObjectName(config.NAME_GUI)
@@ -107,9 +113,11 @@ class UiMainWindow(object):
 		self.result_combo_box.setGeometry(QtCore.QRect(0, 100, 1061, 461))
 		self.result_combo_box.setObjectName("result_combo_box")
 
-		self.result_list_view = QtWidgets.QListView(self.result_combo_box)
-		self.result_list_view.setGeometry(QtCore.QRect(10, 30, 1041, 421))
+		self.result_list_view = QtWidgets.QListWidget(self.result_combo_box)
+		self.result_list_view.setGeometry(QtCore.QRect(20, 40, 1021, 401))
 		self.result_list_view.setObjectName("result_list_view")
+		# self.result_list_view.addItem('Нажми чтобы вывести результат')
+		self.result_list_view.clicked.connect(self.load_data_from_db_to_list)  # FIXME:____
 
 		self.search_combo_box = QtWidgets.QGroupBox(self.main_tab)
 		self.search_combo_box.setGeometry(QtCore.QRect(10, 10, 1051, 81))
@@ -151,13 +159,11 @@ class UiMainWindow(object):
 		self.command_undo_button = QtWidgets.QPushButton(self.gridLayoutWidget)
 		self.command_undo_button.setObjectName("command_undo_button")
 		self.gridLayout.addWidget(self.command_undo_button, 0, 2, 1, 1)
-		# self.command_undo_button.setEnabled(False)
 		self.command_undo_button.clicked.connect(self.stay_parameters_in_prev_state_of_item_in_db)
 
 		self.command_save_button = QtWidgets.QPushButton(self.gridLayoutWidget)
 		self.command_save_button.setObjectName("command_save_button")
 		self.gridLayout.addWidget(self.command_save_button, 0, 1, 1, 1)
-		# self.command_save_button.setEnabled(False)
 		self.command_save_button.clicked.connect(self.save_parameters_in_item_into_db)
 
 		self.command_change_button = QtWidgets.QPushButton(self.gridLayoutWidget)
@@ -392,6 +398,8 @@ class UiFormConnectToDB(object):
 		cursor = connect_to_db(self.data)
 		# TODO: below code in this function
 		if cursor:
+			self.data['cursor'] = cursor
+			self.data['catalog_items_db'] = load_from_db_items(self.data, config.LIMIT_IN_LIST_HOME_PAGE)
 			self.data['connect_window'].close()
 
 	def connection_cancel_button(self):
@@ -470,7 +478,7 @@ class UiFormConnectToDB(object):
 		self.connect_to_db_button = QtWidgets.QPushButton(form_connect_to_db)
 		self.connect_to_db_button.setGeometry(QtCore.QRect(402, 250, 111, 28))
 		self.connect_to_db_button.setObjectName("connect_to_db_button")
-		self.connect_to_db_button.clicked.connect(self.connection_connect_button)
+		self.cursor = self.connect_to_db_button.clicked.connect(self.connection_connect_button)
 
 		self.cancel_connect_to_db_button = QtWidgets.QPushButton(form_connect_to_db)
 		self.cancel_connect_to_db_button.setGeometry(QtCore.QRect(530, 250, 93, 28))
@@ -568,11 +576,24 @@ def connect_to_db(data: dict):
 	return cursor
 
 
+def load_from_db_items(data: dict, limit: int):
+	sql_query = f"SELECT * FROM {data['TABLE_NAME']} ORDER BY quantity ASC LIMIT {limit}"
+	data['cursor'].execute(sql_query)
+	sel = data['cursor'].fetchall()
+	return sel
+
+
+def load_items_to_list_from_db(data: dict):
+	for _ in data['catalog_items_db']:
+		QtWidgets.QListWidgetItem(_, data['main_window'].result_list_view)
+
+
 if __name__ == '__main__':
 	# print(add_and_receive_variables_to_os_environment_from_file())
 	# print(os.environ.values())
 	# create_app()     # old UI
 	ui_create_app()  # new UI
+
 
 	# sql_query = f"SELECT * FROM {data['TABLE_NAME']} ORDER BY quantity ASC LIMIT 10"
 	# cursor.execute(sql_query)
