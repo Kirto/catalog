@@ -3,7 +3,7 @@
 This block created GUI for view information from postgres database.
 
 Author: Kirto
-Version: 0.1
+Version: 0.2
 """
 
 from PyQt5 import QtCore, QtGui, QtWidgets
@@ -37,7 +37,7 @@ class UiMainWindow(object):
 
 		self.data = add_and_receive_variables_to_os_environment_from_file()
 		self.change_params_window = QtWidgets.QMainWindow()
-		self.ui_change_params = UiFormChangingParametersInDb()
+		self.ui_change_params = UiFormChangingParametersInDb(self.data)
 		self.ui_change_params.setup_ui(self.change_params_window)
 
 		self.connect_to_db_window = QtWidgets.QMainWindow()
@@ -67,28 +67,43 @@ class UiMainWindow(object):
 	def change_parameters_in_item_in_db(self):
 		ui_show_module(self.change_params_window)
 
-	def save_parameters_in_item_into_db(self):
+	def save_parameters_in_item_into_db(self): # FIXME:  _____
 		print('save')
 
-	def stay_parameters_in_prev_state_of_item_in_db(self):
+	def stay_parameters_in_prev_state_of_item_in_db(self):  # FIXME:  _____
 		print('cancel')
 
-	def search_item_in_db(self):
+	def search_item_in_db(self):  # FIXME:  _____
 		print('search ....')
 
 	def action_file_connect_to_db(self):
 		load_connection_default_settings(self.ui_connect_to_db, self.data)
 		ui_show_module(self.connect_to_db_window)
 
-	def action_file_export_to_svc(self):
+	def action_file_export_to_svc(self):   # FIXME:  _____
 		print('File -> Export -> to *.svc')
 
-	def action_about_help(self):
+	def action_about_help(self):   # FIXME:  _____
 		print('About -> Help')
 
-	def load_data_from_db_to_list(self): # FIXME:____
-		self.result_list_view.clear()
-		load_items_to_list_from_db(self.data)
+	def show_items_from_db_on_connect_to_db(self):
+		for _ in self.data['catalog_items_db']:
+			s = 'ID = {:6} | NAME = {:30} | OZM = {:10} | DESCR = {:30} | COUNT = {:6}'.format(_[0], _[1], _[2],
+			                                                                                   _[3], _[4])
+			self.result_list_view.insertItem(0, s)
+
+	def load_settings_for_item_from_db(self):
+		s = self.result_list_view.currentItem().text()
+		s = s.split('|')[0].strip()
+		ss = ''
+		for _ in s:
+			if _.isdigit():
+				ss += _
+		if ss:
+			self.data['catalog_item_db_ID'] = int(ss)
+		else:
+			self.data['catalog_item_db_ID'] = 0
+		ui_show_module(self.change_params_window)
 
 	# Main settings
 	def setup_ui(self, MainWindow):
@@ -116,8 +131,7 @@ class UiMainWindow(object):
 		self.result_list_view = QtWidgets.QListWidget(self.result_combo_box)
 		self.result_list_view.setGeometry(QtCore.QRect(20, 40, 1021, 401))
 		self.result_list_view.setObjectName("result_list_view")
-		# self.result_list_view.addItem('Нажми чтобы вывести результат')
-		self.result_list_view.clicked.connect(self.load_data_from_db_to_list)  # FIXME:____
+		self.result_list_view.doubleClicked.connect(self.load_settings_for_item_from_db)
 
 		self.search_combo_box = QtWidgets.QGroupBox(self.main_tab)
 		self.search_combo_box.setGeometry(QtCore.QRect(10, 10, 1051, 81))
@@ -262,8 +276,9 @@ class UiMainWindow(object):
 
 class UiFormChangingParametersInDb(object):
 
-	def __init__(self):
+	def __init__(self, data: dict):
 		super(UiFormChangingParametersInDb, self).__init__()
+		self.data = data
 
 	def setup_ui(self, form_changing_parameters_in_db):
 		form_changing_parameters_in_db.setObjectName(config.NAME_GUI_CHANGE_ITEM)
@@ -396,10 +411,10 @@ class UiFormConnectToDB(object):
 
 	def connection_connect_button(self):
 		cursor = connect_to_db(self.data)
-		# TODO: below code in this function
 		if cursor:
 			self.data['cursor'] = cursor
 			self.data['catalog_items_db'] = load_from_db_items(self.data, config.LIMIT_IN_LIST_HOME_PAGE)
+			self.data['main_window'].show_items_from_db_on_connect_to_db()
 			self.data['connect_window'].close()
 
 	def connection_cancel_button(self):
@@ -539,32 +554,24 @@ def load_connection_default_settings(name, conf: dict):
 		name.parameters_password_text.clear()
 
 
-def create_app():
+def create_app():  # for class Window()
 	app = QtWidgets.QApplication(sys.argv)
 	name = Window()
 	name.show()
-	# print(Window.mro())  # rules entry
 	sys.exit(app.exec_())
 
 
 def add_and_receive_variables_to_os_environment_from_file(name: str = '.env', sep: str = ' = ') -> dict:
 	f = open(os.getcwd() + '\\..\\\\' + name, 'rt')
-	ar = []
 	data = {}
 	with f:
 		for _ in f:
-			ar.append(_)
-		for _ in ar:
-			s = _.split(sep)
-			if s[1][0] == '\'' or s[1][-1] == '\'':
-				s[1] = s[1][1:-2]
-				if not os.getenv(s[0]):
-					os.environ.setdefault(s[0], s[1])
-				data[s[0]] = s[1]
-			else:
-				if not os.getenv(s[0]):
-					os.environ.setdefault(s[0], s[1])
-				data[s[0]] = s[1]
+			s = _.strip().split(sep=sep)
+			if s[1][0] == '\'':
+				s[1] = s[1][1:-1]
+			if not os.getenv(s[0]):
+				os.environ.setdefault(s[0], s[1])
+			data[s[0]] = s[1]
 	return data
 
 
@@ -583,9 +590,8 @@ def load_from_db_items(data: dict, limit: int):
 	return sel
 
 
-def load_items_to_list_from_db(data: dict):
-	for _ in data['catalog_items_db']:
-		QtWidgets.QListWidgetItem(_, data['main_window'].result_list_view)
+def load_settings_selected_item_for_to_parametrate_this_item(data: dict):  # not used!!!!  FIXME: _____
+	pass
 
 
 if __name__ == '__main__':
