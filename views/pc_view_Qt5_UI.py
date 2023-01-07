@@ -3,10 +3,11 @@
 This block created GUI for view information from postgres database.
 
 Author: Kirto
-Version: 0.2
+Version: 0.3
 """
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+import typing
 import variables as config
 import psycopg2 as sql
 import sys
@@ -36,22 +37,27 @@ class UiMainWindow(object):
 		super(UiMainWindow, self).__init__()
 
 		self.data = add_and_receive_variables_to_os_environment_from_file()
-		self.change_params_window = QtWidgets.QMainWindow()
-		self.ui_change_params = UiFormChangingParametersInDb(self.data)
-		self.ui_change_params.setup_ui(self.change_params_window)
+
+		self.data['main_window'] = self
+		self.data['select_item'] = {}
+		self.data['change_item'] = {}
 
 		self.connect_to_db_window = QtWidgets.QMainWindow()
 		self.data['connect_window'] = self.connect_to_db_window
 		self.ui_connect_to_db = UiFormConnectToDB(self.data)
 		self.ui_connect_to_db.setup_ui(self.connect_to_db_window)
 
-		self.data['main_window'] = self
+		self.change_params_window = QtWidgets.QMainWindow()
+		self.data['params_window'] = self.change_params_window   # now not used
+		self.ui_change_params = UiFormChangingParametersInDb(self.data)
+		self.ui_change_params.setup_ui(self.change_params_window)
+		self.data['params_ui'] = self.ui_change_params
 
 		if int(self.data['DEFAULT_SETTINGS_LOAD']) == 1:
 			self.ui_connect_to_db.parameters_check_default_connect_settings.setChecked(True)
 
-	def update_search_button_when_no_search_text(self, text: str):
-		if text:
+	def update_search_button_when_no_search_text(self):
+		if self.search_text.text():
 			self.search_button.setEnabled(True)
 		else:
 			self.search_button.setEnabled(False)
@@ -65,7 +71,7 @@ class UiMainWindow(object):
 		exit()
 
 	def change_parameters_in_item_in_db(self):
-		ui_show_module(self.change_params_window)
+		self.load_settings_for_item_from_db()
 
 	def save_parameters_in_item_into_db(self): # FIXME:  _____
 		print('save')
@@ -92,6 +98,19 @@ class UiMainWindow(object):
 			                                                                                   _[3], _[4])
 			self.result_list_view.insertItem(0, s)
 
+	def add_values_to_parameters_of_item(self, ui, values: dict):  # FIXME: add to window OZM text and label in QtDesiner
+		ui.parameters_id_item_in_db_text.setText(str(values['id']))
+		ui.parameters_name_item_in_db_text.setText(values['name'])
+		# ui.parameters_ozm_item_in_db_text.setText(str(values['ozm']))
+		ui.parameters_description_item_in_db_text.setText(values['description'])
+		ui.parameters_quantity_item_in_db_spin_box.setValue(values['quantity'])
+		# ui.parameters_row_location_in_warehouse_spin_box.setValue(values['row'])
+		# ui.parameters_shelf_location_in_warehouse_spin_box.setValue(values['shelf'])
+
+	def add_selected_item_in_data(self, data: dict):
+		self.data = load_settings_selected_item_for_to_parametrate_this_item(data, data['catalog_item_db_ID'])
+		self.add_values_to_parameters_of_item(data['params_ui'], data['select_item'])
+
 	def load_settings_for_item_from_db(self):
 		s = self.result_list_view.currentItem().text()
 		s = s.split('|')[0].strip()
@@ -103,6 +122,7 @@ class UiMainWindow(object):
 			self.data['catalog_item_db_ID'] = int(ss)
 		else:
 			self.data['catalog_item_db_ID'] = 0
+		self.add_selected_item_in_data(self.data)
 		ui_show_module(self.change_params_window)
 
 	# Main settings
@@ -310,6 +330,7 @@ class UiFormChangingParametersInDb(object):
 			QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
 		self.parameters_quantity_item_in_db_spin_box.setObjectName("parameters_quantity_item_in_db_spin_box")
 		self.gridLayout.addWidget(self.parameters_quantity_item_in_db_spin_box, 4, 1, 1, 1)
+		self.parameters_quantity_item_in_db_spin_box.setMaximum(config.MAX_VALUES_FOR_ITEMS)
 
 		self.parameters_id_item_in_db_label = QtWidgets.QLabel(self.gridLayoutWidget)
 		self.parameters_id_item_in_db_label.setObjectName("parameters_id_item_in_db_label")
@@ -363,6 +384,8 @@ class UiFormChangingParametersInDb(object):
 			QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
 		self.parameters_row_location_in_warehouse_spin_box.setObjectName(
 			"parameters_row_location_in_warehouse_spin_box")
+		self.parameters_row_location_in_warehouse_spin_box.setMaximum(config.MAX_VALUES_FOR_ROW)
+
 		self.parameters_shelf_location_in_warehouse_spin_box = QtWidgets.QSpinBox(
 			self.parameters_location_in_warehouse_combo_box)
 		self.parameters_shelf_location_in_warehouse_spin_box.setGeometry(QtCore.QRect(110, 50, 151, 22))
@@ -370,6 +393,7 @@ class UiFormChangingParametersInDb(object):
 			QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
 		self.parameters_shelf_location_in_warehouse_spin_box.setObjectName(
 			"parameters_shelf_location_in_warehouse_spin_box")
+		self.parameters_shelf_location_in_warehouse_spin_box.setMaximum(config.MAX_VALUES_FOR_SHELF)
 
 		self.save_button = QtWidgets.QPushButton(form_changing_parameters_in_db)
 		self.save_button.setGeometry(QtCore.QRect(680, 420, 93, 28))
@@ -584,14 +608,25 @@ def connect_to_db(data: dict):
 
 
 def load_from_db_items(data: dict, limit: int):
-	sql_query = f"SELECT * FROM {data['TABLE_NAME']} ORDER BY quantity ASC LIMIT {limit}"
+	sql_query = f"SELECT id, name, ozm, description, quantity FROM {data['TABLE_NAME']} ORDER BY quantity ASC LIMIT" \
+	            f" {limit}"
 	data['cursor'].execute(sql_query)
 	sel = data['cursor'].fetchall()
 	return sel
 
 
-def load_settings_selected_item_for_to_parametrate_this_item(data: dict):  # not used!!!!  FIXME: _____
-	pass
+def load_settings_selected_item_for_to_parametrate_this_item(data: dict, id: int):  # not used!!!!  FIXME: _____
+	sql_query = f"SELECT * FROM {data['TABLE_NAME']} WHERE id = {id}"
+	data['cursor'].execute(sql_query)
+	sel = data['cursor'].fetchall()
+	data['select_item']['id'] = sel[0][0]
+	data['select_item']['name'] = sel[0][1]
+	data['select_item']['ozm'] = sel[0][2]
+	data['select_item']['description'] = sel[0][3]
+	data['select_item']['quantity'] = sel[0][4]
+	# item['select_item']['row'] = sel[5] | None
+	# item['select_item']['shelf'] = sel[6] | None
+	return data
 
 
 if __name__ == '__main__':

@@ -19,4 +19,7 @@ HEIGHT_CHANGE = 469
 
 RESIZE = True
 PNG_ICO_PATH = 'ico_gui.png'  # path to file *.png for creating ico application
-LIMIT_IN_LIST_HOME_PAGE = 10 # limit in sql query in listbox or labels or combobox on home page
+LIMIT_IN_LIST_HOME_PAGE = 10 # limit in sql query in listbox or labels or combobox on home page\
+MAX_VALUES_FOR_ITEMS = 9999 # this value for maximum quantity of item on warehouse
+MAX_VALUES_FOR_ROW = 10
+MAX_VALUES_FOR_SHELF = 10
