@@ -7,29 +7,10 @@ Version: 0.5
 """
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-import typing
 import variables as config
 import psycopg2 as sql
 import sys
 import os
-
-
-class Window(QtWidgets.QMainWindow):
-
-	def __init__(self):
-		super().__init__()
-
-		self.setWindowTitle(config.NAME_GUI)
-		self.setGeometry(config.OFFSETX, config.OFFSETY, config.WIDTH, config.HEIGHT)
-
-		self.button = QtWidgets.QPushButton(self)
-		self.button.move(70, 150)
-		self.button.setText('Push me~!')
-		self.button.setFixedWidth(200)
-		self.button.clicked.connect(self.clicked_button)
-
-	def clicked_button(self):
-		pass
 
 
 class UiMainWindow(object):
@@ -138,7 +119,7 @@ class UiMainWindow(object):
 			                                                                                   _[3], _[4])
 			self.result_list_view.insertItem(0, s)
 
-	def add_values_to_parameters_of_item(self, ui, values: dict):  # FIXME: add to window OZM text and label in QtDesiner
+	def add_values_to_parameters_of_item(self, ui, values: dict):  # FIXME: ___
 		ui.parameters_id_item_in_db_text.setText(str(values['id']))
 		ui.parameters_name_item_in_db_text.setText(values['name'])
 		ui.parameters_ozm_item_in_db_text.setText(str(values['ozm']))
@@ -637,13 +618,6 @@ def load_connection_default_settings(name, conf: dict):
 		name.parameters_password_text.clear()
 
 
-def create_app():  # for class Window()
-	app = QtWidgets.QApplication(sys.argv)
-	name = Window()
-	name.show()
-	sys.exit(app.exec_())
-
-
 def add_and_receive_variables_to_os_environment_from_file(name: str = '.env', sep: str = ' = ') -> dict:
 	f = open(os.getcwd() + '\\..\\\\' + name, 'rt')
 	data = {}
@@ -688,15 +662,12 @@ def load_settings_selected_item_for_to_parametrate_this_item(data: dict, id: int
 	data['select_item']['ozm'] = sel[0][2]
 	data['select_item']['description'] = sel[0][3]
 	data['select_item']['quantity'] = sel[0][4]
-	# item['select_item']['row'] = sel[5] | None
-	# item['select_item']['shelf'] = sel[6] | None
+	# item['select_item']['row'] = sel[0][5]
+	# item['select_item']['shelf'] = sel[0][6]
 	return data
 
 
 if __name__ == '__main__':
-	# print(add_and_receive_variables_to_os_environment_from_file())
-	# print(os.environ.values())
-	# create_app()     # old UI
 	ui_create_app()  # new UI
 
 
