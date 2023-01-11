@@ -3,7 +3,7 @@
 This block created GUI for view information from postgres database.
 
 Author: Kirto
-Version: 0.3
+Version: 0.5
 """
 
 from PyQt5 import QtCore, QtGui, QtWidgets
@@ -73,11 +73,51 @@ class UiMainWindow(object):
 	def change_parameters_in_item_in_db(self):
 		self.load_settings_for_item_from_db()
 
-	def save_parameters_in_item_into_db(self): # FIXME:  _____
-		print('save')
+	def validate_text_on_change(self, old_data: dict) -> dict:   # FIXME: _____
+		""" This save parameters from window with parameters of item in date base to self.data['change_item']. """
 
-	def stay_parameters_in_prev_state_of_item_in_db(self):  # FIXME:  _____
-		print('cancel')
+		data = {}
+
+		name = self.ui_change_params.parameters_name_item_in_db_text.text()
+		ozm = int(self.ui_change_params.parameters_ozm_item_in_db_text.text())
+		description = self.ui_change_params.parameters_description_item_in_db_text.toPlainText()
+		quantity = int(self.ui_change_params.parameters_quantity_item_in_db_spin_box.text())
+		row_in_warehouse = self.ui_change_params.parameters_row_location_in_warehouse_spin_box.text()
+		shelf_in_warehouse = self.ui_change_params.parameters_shelf_location_in_warehouse_spin_box.text()
+
+		if old_data['name'] != name:
+			data['name'] = name
+		if old_data['ozm'] != ozm:
+			data['ozm'] = ozm
+		if old_data['description'] != description:
+			data['description'] = description
+		if old_data['quantity'] != quantity:
+			data['quantity'] = quantity
+		# if old_data['row'] != row_in_warehouse:
+		# 	data['row'] = row_in_warehouse
+		# if old_data['shelf'] != shelf_in_warehouse:
+		# 	data['shelf'] = shelf_in_warehouse
+
+		return data
+
+	def save_to_db_new_parameters(self):
+		if self.data['change_item']:
+			update_db_a_new_values(self.data)
+
+	def save_parameters_in_data(self):
+		self.data['change_item'] = self.validate_text_on_change(self.data['select_item'])
+
+		if self.data['change_item']:
+			self.data['main_window'].command_save_button.setEnabled(True)
+			self.data['main_window'].command_undo_button.setEnabled(True)
+		else:
+			self.data['main_window'].command_save_button.setEnabled(False)
+			self.data['main_window'].command_undo_button.setEnabled(False)
+
+		self.data['params_window'].close()
+
+	def stay_parameters_in_prev_state_of_item_in_db(self):
+		self.data['change_item'] = {}
 
 	def search_item_in_db(self):  # FIXME:  _____
 		print('search ....')
@@ -101,11 +141,11 @@ class UiMainWindow(object):
 	def add_values_to_parameters_of_item(self, ui, values: dict):  # FIXME: add to window OZM text and label in QtDesiner
 		ui.parameters_id_item_in_db_text.setText(str(values['id']))
 		ui.parameters_name_item_in_db_text.setText(values['name'])
-		# ui.parameters_ozm_item_in_db_text.setText(str(values['ozm']))
+		ui.parameters_ozm_item_in_db_text.setText(str(values['ozm']))
 		ui.parameters_description_item_in_db_text.setText(values['description'])
 		ui.parameters_quantity_item_in_db_spin_box.setValue(values['quantity'])
-		# ui.parameters_row_location_in_warehouse_spin_box.setValue(values['row'])
-		# ui.parameters_shelf_location_in_warehouse_spin_box.setValue(values['shelf'])
+	# ui.parameters_row_location_in_warehouse_spin_box.setValue(values['row'])
+	# ui.parameters_shelf_location_in_warehouse_spin_box.setValue(values['shelf'])
 
 	def add_selected_item_in_data(self, data: dict):
 		self.data = load_settings_selected_item_for_to_parametrate_this_item(data, data['catalog_item_db_ID'])
@@ -193,16 +233,19 @@ class UiMainWindow(object):
 		self.command_undo_button = QtWidgets.QPushButton(self.gridLayoutWidget)
 		self.command_undo_button.setObjectName("command_undo_button")
 		self.gridLayout.addWidget(self.command_undo_button, 0, 2, 1, 1)
+		self.command_undo_button.setEnabled(False)
 		self.command_undo_button.clicked.connect(self.stay_parameters_in_prev_state_of_item_in_db)
 
 		self.command_save_button = QtWidgets.QPushButton(self.gridLayoutWidget)
 		self.command_save_button.setObjectName("command_save_button")
 		self.gridLayout.addWidget(self.command_save_button, 0, 1, 1, 1)
-		self.command_save_button.clicked.connect(self.save_parameters_in_item_into_db)
+		self.command_save_button.setEnabled(False)
+		self.command_save_button.clicked.connect(self.save_to_db_new_parameters)
 
 		self.command_change_button = QtWidgets.QPushButton(self.gridLayoutWidget)
 		self.command_change_button.setObjectName("command_change_button")
 		self.gridLayout.addWidget(self.command_change_button, 0, 0, 1, 1)
+		self.command_change_button.setEnabled(False)
 		self.command_change_button.clicked.connect(self.change_parameters_in_item_in_db)
 
 		self.command_exit_button = QtWidgets.QPushButton(self.gridLayoutWidget)
@@ -300,6 +343,9 @@ class UiFormChangingParametersInDb(object):
 		super(UiFormChangingParametersInDb, self).__init__()
 		self.data = data
 
+	def cancel_change_parameters(self):
+		self.data['params_window'].close()
+
 	def setup_ui(self, form_changing_parameters_in_db):
 		form_changing_parameters_in_db.setObjectName(config.NAME_GUI_CHANGE_ITEM)
 		form_changing_parameters_in_db.setFixedSize(config.WIDTH_CHANGE, config.HEIGHT_CHANGE)
@@ -329,7 +375,7 @@ class UiFormChangingParametersInDb(object):
 		self.parameters_quantity_item_in_db_spin_box.setAlignment(
 			QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
 		self.parameters_quantity_item_in_db_spin_box.setObjectName("parameters_quantity_item_in_db_spin_box")
-		self.gridLayout.addWidget(self.parameters_quantity_item_in_db_spin_box, 4, 1, 1, 1)
+		self.gridLayout.addWidget(self.parameters_quantity_item_in_db_spin_box, 6, 1, 1, 1)
 		self.parameters_quantity_item_in_db_spin_box.setMaximum(config.MAX_VALUES_FOR_ITEMS)
 
 		self.parameters_id_item_in_db_label = QtWidgets.QLabel(self.gridLayoutWidget)
@@ -338,7 +384,7 @@ class UiFormChangingParametersInDb(object):
 
 		self.parameters_description_item_in_db_text = QtWidgets.QTextEdit(self.gridLayoutWidget)
 		self.parameters_description_item_in_db_text.setObjectName("parameters_description_item_in_db_text")
-		self.gridLayout.addWidget(self.parameters_description_item_in_db_text, 3, 1, 1, 2)
+		self.gridLayout.addWidget(self.parameters_description_item_in_db_text, 4, 1, 1, 2)
 
 		self.parameters_id_item_in_db_text = QtWidgets.QLineEdit(self.gridLayoutWidget)
 		self.parameters_id_item_in_db_text.setAcceptDrops(True)
@@ -354,11 +400,19 @@ class UiFormChangingParametersInDb(object):
 
 		self.parameters_description_item_in_db_label = QtWidgets.QLabel(self.gridLayoutWidget)
 		self.parameters_description_item_in_db_label.setObjectName("parameters_description_item_in_db_label")
-		self.gridLayout.addWidget(self.parameters_description_item_in_db_label, 3, 0, 1, 1)
+		self.gridLayout.addWidget(self.parameters_description_item_in_db_label, 4, 0, 1, 1)
 
 		self.parameters_quantity_item_in_db_label = QtWidgets.QLabel(self.gridLayoutWidget)
 		self.parameters_quantity_item_in_db_label.setObjectName("parameters_quantity_item_in_db_label")
-		self.gridLayout.addWidget(self.parameters_quantity_item_in_db_label, 4, 0, 1, 1)
+		self.gridLayout.addWidget(self.parameters_quantity_item_in_db_label, 6, 0, 1, 1)
+
+		self.parameters_ozm_item_in_db_label = QtWidgets.QLabel(self.gridLayoutWidget)
+		self.parameters_ozm_item_in_db_label.setObjectName("parameters_ozm_item_in_db_label")
+		self.gridLayout.addWidget(self.parameters_ozm_item_in_db_label, 3, 0, 1, 1)
+
+		self.parameters_ozm_item_in_db_text = QtWidgets.QLineEdit(self.gridLayoutWidget)
+		self.parameters_ozm_item_in_db_text.setObjectName("parameters_ozm_item_in_db_text")
+		self.gridLayout.addWidget(self.parameters_ozm_item_in_db_text, 3, 1, 1, 1)
 
 		self.parameters_name_item_in_db_text = QtWidgets.QLineEdit(self.gridLayoutWidget)
 		self.parameters_name_item_in_db_text.setObjectName("parameters_name_item_in_db_text")
@@ -398,10 +452,12 @@ class UiFormChangingParametersInDb(object):
 		self.save_button = QtWidgets.QPushButton(form_changing_parameters_in_db)
 		self.save_button.setGeometry(QtCore.QRect(680, 420, 93, 28))
 		self.save_button.setObjectName("save_button")
+		self.save_button.clicked.connect(self.data['main_window'].save_parameters_in_data)
 
 		self.cancel_button = QtWidgets.QPushButton(form_changing_parameters_in_db)
 		self.cancel_button.setGeometry(QtCore.QRect(800, 420, 93, 28))
 		self.cancel_button.setObjectName("cancel_button")
+		self.cancel_button.clicked.connect(self.cancel_change_parameters)
 
 		self.retranslate_ui(form_changing_parameters_in_db)
 		QtCore.QMetaObject.connectSlotsByName(form_changing_parameters_in_db)
@@ -414,6 +470,8 @@ class UiFormChangingParametersInDb(object):
 		self.parameters_item_in_db_combo_box.setTitle(_translate("form_changing_parameters_in_db", "Общие"))
 		self.parameters_id_item_in_db_label.setText(_translate("form_changing_parameters_in_db", "ID предмета в базе:"))
 		self.parameters_name_item_in_db_label.setText(_translate("form_changing_parameters_in_db", "Имя:"))
+		self.parameters_ozm_item_in_db_label.setText(
+			_translate("form_changing_parameters_in_db", "Заказной номер (ОЗМ):"))
 		self.parameters_description_item_in_db_label.setText(
 			_translate("form_changing_parameters_in_db", "Описание предмета:"))
 		self.parameters_quantity_item_in_db_label.setText(
@@ -439,6 +497,7 @@ class UiFormConnectToDB(object):
 			self.data['cursor'] = cursor
 			self.data['catalog_items_db'] = load_from_db_items(self.data, config.LIMIT_IN_LIST_HOME_PAGE)
 			self.data['main_window'].show_items_from_db_on_connect_to_db()
+			self.data['main_window'].command_change_button.setEnabled(True)
 			self.data['connect_window'].close()
 
 	def connection_cancel_button(self):
@@ -613,6 +672,11 @@ def load_from_db_items(data: dict, limit: int):
 	data['cursor'].execute(sql_query)
 	sel = data['cursor'].fetchall()
 	return sel
+
+
+def update_db_a_new_values(data: dict): # FIXME:__
+	print(data)
+	print('Updating ...')
 
 
 def load_settings_selected_item_for_to_parametrate_this_item(data: dict, id: int):  # not used!!!!  FIXME: _____
