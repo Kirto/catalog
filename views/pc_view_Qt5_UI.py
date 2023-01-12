@@ -118,6 +118,7 @@ class UiMainWindow(object):
 		print('About -> Help')
 
 	def show_items_from_db_on_connect_to_db(self):
+		self.result_list_view.clear()
 		for _ in self.data['catalog_items_db']:
 			s = 'ID: {:^6} | NAME: {:^60} | OZM: {:^10} | DESCR: {:^100} | COUNT: {:^6}'.format(_[0], _[1], _[2],
 																								_[3], _[4])
@@ -477,7 +478,7 @@ class UiFormConnectToDB(object):
 		self.data = data
 
 	def connection_connect_button(self):
-		cursor = connect_to_db(self.data)
+		connection, cursor = connect_to_db(self.data)
 		if cursor:
 			self.data['cursor'] = cursor
 			self.data['catalog_items_db'] = load_from_db_items(self.data, config.LIMIT_IN_LIST_HOME_PAGE)
@@ -637,24 +638,49 @@ def add_and_receive_variables_to_os_environment_from_file(name: str = '.env', se
 
 
 def connect_to_db(data: dict):
+	""" Return connection and cursor. """
+
 	conn_string = "host=" + data['HOST'] + " port=" + data['PORT'] + " dbname=" + \
 				  data['DB_NAME'] + " user=" + data['USER_NAME_DB'] + " password=" + data['PASSWORD_DB']
 	conn = sql.connect(conn_string)
 	cursor = conn.cursor()
-	return cursor
+	return conn, cursor
 
 
-def load_from_db_items(data: dict, limit: int):
-	sql_query = f"SELECT id, name, ozm, description, quantity FROM {data['TABLE_NAME']} ORDER BY quantity ASC LIMIT" \
-	            f" {limit}"
+def load_from_db_items(data: dict, limit: int, order_by: str = 'DESC'):
+	sql_query = f"SELECT id, name, ozm, description, quantity FROM {data['TABLE_NAME']} ORDER BY quantity {order_by} " \
+	            f"LIMIT {limit}"
 	data['cursor'].execute(sql_query)
 	sel = data['cursor'].fetchall()
 	return sel
 
 
-def update_db_a_new_values(data: dict): # FIXME:___
-	print(data)
-	print('Updating ...')
+def update_list_box(data: dict):
+	conn, cur = connect_to_db(data)
+	data['catalog_items_db'] = load_from_db_items(data, config.LIMIT_IN_LIST_HOME_PAGE)
+	data['main_window'].show_items_from_db_on_connect_to_db()
+	cur.close()
+	conn.close()
+
+
+def update_db_a_new_values(data: dict):
+	values = ''
+	for _ in data['select_item'].keys():
+		if _ in data['change_item'].keys():
+			if _.isdigit():
+				values += f"{_} = {data['change_item'][_]}, "
+			else:
+				values += f"{_} = '{data['change_item'][_]}', "
+
+	quary = f"UPDATE {data['TABLE_NAME']} SET {values[:-2]} WHERE id = {data['select_item']['id']};"
+	conn, data['cursor'] = connect_to_db(data)
+	cursor = data['cursor']
+	cursor.execute(quary)
+	conn.commit()
+	update_list_box(data)
+
+	cursor.close()
+	conn.close()
 
 
 def load_settings_selected_item_for_to_parametrate_this_item(data: dict, id: int):
@@ -673,12 +699,6 @@ def load_settings_selected_item_for_to_parametrate_this_item(data: dict, id: int
 
 if __name__ == '__main__':
 	ui_create_app()  # new UI
-
-
-	# sql_query = f"SELECT * FROM {data['TABLE_NAME']} ORDER BY quantity ASC LIMIT 10"
-	# cursor.execute(sql_query)
-	#
-	# sel = cursor.fetchall()
 
 
 # From directory catalog make command in terminal for compile *.ui to *.py
