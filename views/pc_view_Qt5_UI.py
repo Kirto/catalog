@@ -652,7 +652,7 @@ def load_from_db_items(data: dict, limit: int):
 	return sel
 
 
-def update_db_a_new_values(data: dict): # FIXME:__
+def update_db_a_new_values(data: dict): # FIXME:___
 	print(data)
 	print('Updating ...')
 
