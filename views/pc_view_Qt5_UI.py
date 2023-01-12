@@ -54,7 +54,7 @@ class UiMainWindow(object):
 	def change_parameters_in_item_in_db(self):
 		self.load_settings_for_item_from_db()
 
-	def validate_text_on_change(self, old_data: dict) -> dict:   # FIXME: _____
+	def validate_text_on_change(self, old_data: dict) -> dict:
 		""" This save parameters from window with parameters of item in date base to self.data['change_item']. """
 
 		data = {}
@@ -63,8 +63,8 @@ class UiMainWindow(object):
 		ozm = int(self.ui_change_params.parameters_ozm_item_in_db_text.text())
 		description = self.ui_change_params.parameters_description_item_in_db_text.toPlainText()
 		quantity = int(self.ui_change_params.parameters_quantity_item_in_db_spin_box.text())
-		row_in_warehouse = self.ui_change_params.parameters_row_location_in_warehouse_spin_box.text()
-		shelf_in_warehouse = self.ui_change_params.parameters_shelf_location_in_warehouse_spin_box.text()
+		row_in_warehouse = int(self.ui_change_params.parameters_row_location_in_warehouse_spin_box.text())
+		shelf_in_warehouse = int(self.ui_change_params.parameters_shelf_location_in_warehouse_spin_box.text())
 
 		if old_data['name'] != name:
 			data['name'] = name
@@ -74,16 +74,18 @@ class UiMainWindow(object):
 			data['description'] = description
 		if old_data['quantity'] != quantity:
 			data['quantity'] = quantity
-		# if old_data['row'] != row_in_warehouse:
-		# 	data['row'] = row_in_warehouse
-		# if old_data['shelf'] != shelf_in_warehouse:
-		# 	data['shelf'] = shelf_in_warehouse
+		if old_data['row'] != row_in_warehouse:
+			data['row'] = row_in_warehouse
+		if old_data['shelf'] != shelf_in_warehouse:
+			data['shelf'] = shelf_in_warehouse
 
 		return data
 
 	def save_to_db_new_parameters(self):
 		if self.data['change_item']:
 			update_db_a_new_values(self.data)
+			self.data['main_window'].command_save_button.setEnabled(False)
+			self.data['main_window'].command_undo_button.setEnabled(False)
 
 	def save_parameters_in_data(self):
 		self.data['change_item'] = self.validate_text_on_change(self.data['select_item'])
@@ -99,6 +101,8 @@ class UiMainWindow(object):
 
 	def stay_parameters_in_prev_state_of_item_in_db(self):
 		self.data['change_item'] = {}
+		self.data['main_window'].command_save_button.setEnabled(False)
+		self.data['main_window'].command_undo_button.setEnabled(False)
 
 	def search_item_in_db(self):  # FIXME:  _____
 		print('search ....')
@@ -115,18 +119,18 @@ class UiMainWindow(object):
 
 	def show_items_from_db_on_connect_to_db(self):
 		for _ in self.data['catalog_items_db']:
-			s = 'ID = {:6} | NAME = {:30} | OZM = {:10} | DESCR = {:30} | COUNT = {:6}'.format(_[0], _[1], _[2],
-			                                                                                   _[3], _[4])
+			s = 'ID: {:^6} | NAME: {:^60} | OZM: {:^10} | DESCR: {:^100} | COUNT: {:^6}'.format(_[0], _[1], _[2],
+																								_[3], _[4])
 			self.result_list_view.insertItem(0, s)
 
-	def add_values_to_parameters_of_item(self, ui, values: dict):  # FIXME: ___
+	def add_values_to_parameters_of_item(self, ui, values: dict):
 		ui.parameters_id_item_in_db_text.setText(str(values['id']))
 		ui.parameters_name_item_in_db_text.setText(values['name'])
 		ui.parameters_ozm_item_in_db_text.setText(str(values['ozm']))
 		ui.parameters_description_item_in_db_text.setText(values['description'])
 		ui.parameters_quantity_item_in_db_spin_box.setValue(values['quantity'])
-	# ui.parameters_row_location_in_warehouse_spin_box.setValue(values['row'])
-	# ui.parameters_shelf_location_in_warehouse_spin_box.setValue(values['shelf'])
+		ui.parameters_row_location_in_warehouse_spin_box.setValue(values['row'])
+		ui.parameters_shelf_location_in_warehouse_spin_box.setValue(values['shelf'])
 
 	def add_selected_item_in_data(self, data: dict):
 		self.data = load_settings_selected_item_for_to_parametrate_this_item(data, data['catalog_item_db_ID'])
@@ -653,7 +657,7 @@ def update_db_a_new_values(data: dict): # FIXME:__
 	print('Updating ...')
 
 
-def load_settings_selected_item_for_to_parametrate_this_item(data: dict, id: int):  # not used!!!!  FIXME: _____
+def load_settings_selected_item_for_to_parametrate_this_item(data: dict, id: int):
 	sql_query = f"SELECT * FROM {data['TABLE_NAME']} WHERE id = {id}"
 	data['cursor'].execute(sql_query)
 	sel = data['cursor'].fetchall()
@@ -662,8 +666,8 @@ def load_settings_selected_item_for_to_parametrate_this_item(data: dict, id: int
 	data['select_item']['ozm'] = sel[0][2]
 	data['select_item']['description'] = sel[0][3]
 	data['select_item']['quantity'] = sel[0][4]
-	# item['select_item']['row'] = sel[0][5]
-	# item['select_item']['shelf'] = sel[0][6]
+	data['select_item']['row'] = sel[0][5]
+	data['select_item']['shelf'] = sel[0][6]
 	return data
 
 
