@@ -3,7 +3,7 @@
 This block created GUI for view information from postgres database.
 
 Author: Kirto
-Version: 0.5
+Version: 0.6
 """
 
 from PyQt5 import QtCore, QtGui, QtWidgets
