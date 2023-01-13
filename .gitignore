@@ -7,6 +7,4 @@ Scripts
 Lib
 Include
 .env
-views/build
-views/dist
-views/pc_view_Qt5_UI.spec
+Build_file
