@@ -3,7 +3,7 @@
 This block created GUI for view information from postgres database.
 
 Author: Kirto
-Version: 0.6
+Version: 0.7(alpha)
 """
 
 from PyQt5 import QtCore, QtGui, QtWidgets
@@ -38,7 +38,7 @@ class UiMainWindow(object):
 			self.ui_connect_to_db.parameters_check_default_connect_settings.setChecked(True)
 
 	def update_search_button_when_no_search_text(self):
-		if self.search_text.text():
+		if self.search_text.text() and self.data['is_connected']:
 			self.search_button.setEnabled(True)
 		else:
 			self.search_button.setEnabled(False)
@@ -104,8 +104,15 @@ class UiMainWindow(object):
 		self.data['main_window'].command_save_button.setEnabled(False)
 		self.data['main_window'].command_undo_button.setEnabled(False)
 
-	def search_item_in_db(self):  # FIXME:  _____
-		print('search ....')
+	def search_item_in_db(self):
+		text = self.data['main_window'].search_text.text()
+		if text.isdigit():
+			sel = find_item_into_db_by_ozm(self.data, int(text))
+		else:
+			sel = find_item_into_db_by_name_or_discr(self.data, text)
+
+		self.data['main_window'].result_list_view.clear()
+		search_result_to_list_box(self.data, sel)
 
 	def action_file_connect_to_db(self):
 		load_connection_default_settings(self.ui_connect_to_db, self.data)
@@ -118,10 +125,8 @@ class UiMainWindow(object):
 		print('About -> Help')
 
 	def show_items_from_db_on_connect_to_db(self):
-		self.result_list_view.clear()
 		for _ in self.data['catalog_items_db']:
-			s = 'ID: {:^6} | NAME: {:^60} | OZM: {:^10} | DESCR: {:^100} | COUNT: {:^6}'.format(_[0], _[1], _[2],
-																								_[3], _[4])
+			s = config.TEMPLATE_ITEM_IN_LIST_BOX.format(_[0], _[1], _[2], _[3], _[4])
 			self.result_list_view.insertItem(0, s)
 
 	def add_values_to_parameters_of_item(self, ui, values: dict):
@@ -481,6 +486,7 @@ class UiFormConnectToDB(object):
 		connection, cursor = connect_to_db(self.data)
 		if cursor:
 			self.data['cursor'] = cursor
+			self.data['is_connected'] = True
 			self.data['catalog_items_db'] = load_from_db_items(self.data, config.LIMIT_IN_LIST_HOME_PAGE)
 			self.data['main_window'].show_items_from_db_on_connect_to_db()
 			self.data['main_window'].command_change_button.setEnabled(True)
@@ -649,18 +655,16 @@ def connect_to_db(data: dict):
 
 def load_from_db_items(data: dict, limit: int, order_by: str = 'DESC'):
 	sql_query = f"SELECT id, name, ozm, description, quantity FROM {data['TABLE_NAME']} ORDER BY quantity {order_by} " \
-	            f"LIMIT {limit}"
+	            f"LIMIT {limit};"
 	data['cursor'].execute(sql_query)
 	sel = data['cursor'].fetchall()
 	return sel
 
 
 def update_list_box(data: dict):
-	conn, cur = connect_to_db(data)
 	data['catalog_items_db'] = load_from_db_items(data, config.LIMIT_IN_LIST_HOME_PAGE)
+	data['main_window'].result_list_view.clear()
 	data['main_window'].show_items_from_db_on_connect_to_db()
-	cur.close()
-	conn.close()
 
 
 def update_db_a_new_values(data: dict):
@@ -679,8 +683,41 @@ def update_db_a_new_values(data: dict):
 	conn.commit()
 	update_list_box(data)
 
-	cursor.close()
-	conn.close()
+
+def search_result_to_list_box(data: dict, sel: list[tuple]):
+	for _ in sel:
+		s = config.TEMPLATE_ITEM_IN_LIST_BOX.format(_[0], _[1], _[2], _[3], _[4])
+		data['main_window'].result_list_view.insertItem(0, s)
+
+
+def find_item_into_db_by_ozm(data: dict, ozm: int):  # 710589
+	conn, cursor = connect_to_db(data)
+	quary = f"SELECT id, name, ozm, description, quantity FROM {data['TABLE_NAME']} WHERE ozm = {ozm};"
+	cursor.execute(quary)
+	sel = cursor.fetchall()
+	if not sel:
+		sel = [config.FAIL_MESSAGE_TO_LIST_BOX]
+	return sel
+
+
+def find_item_into_db_by_name_or_discr(data: dict, text: str):
+	conn, cursor = connect_to_db(data)
+	quary = f"SELECT id, name, ozm, description, quantity FROM {data['TABLE_NAME']}"
+	cursor.execute(quary)
+	sel = cursor.fetchall()
+	result_items = []
+	text = text.lower()
+	if not sel:
+		return [config.FAIL_MESSAGE_TO_LIST_BOX]
+	else:
+		for _ in sel:
+			name = _[1].lower().split()
+			descr = _[3].lower().split()
+			if (text in name) or (text in descr):
+				result_items.append(_)
+		if not result_items:
+			return [config.FAIL_MESSAGE_TO_LIST_BOX]
+	return result_items
 
 
 def load_settings_selected_item_for_to_parametrate_this_item(data: dict, id: int):

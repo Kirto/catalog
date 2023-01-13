@@ -23,3 +23,5 @@ LIMIT_IN_LIST_HOME_PAGE = 10 # limit in sql query in listbox or labels or combob
 MAX_VALUES_FOR_ITEMS = 9999 # this value for maximum quantity of item on warehouse
 MAX_VALUES_FOR_ROW = 10
 MAX_VALUES_FOR_SHELF = 10
+TEMPLATE_ITEM_IN_LIST_BOX = 'ID: {:^6} | NAME: {:^60} | OZM: {:^10} | DESCR: {:^100} | COUNT: {:^6}'
+FAIL_MESSAGE_TO_LIST_BOX = (-1, 'No into data base item with this ozm number!', -1, '-----------------', -1)
